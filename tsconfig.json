@@ -14,7 +14,34 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "@papx/utils": [
+        "./src/app/utils/index.ts"
+      ],
+      "@papx/models": [
+        "./src/app/@models/index.ts"
+      ],
+      "@papx/data-access": [
+        "./src/app/@data-access/index.ts"
+      ],
+      "@papx/data-access/bancos": [
+        "./src/app/@data-access-bancos/index.ts"
+      ],
+      "@papx/shared/*": [
+        "./src/app/shared/*"
+      ],
+      "@papx/shared/ui-bancos": [
+        "./src/app/shared/ui-bancos/index.ts"
+      ],
+      "@papx/shared/ui-clientes": [
+        "./src/app/shared/ui-clientes/index.ts"
+      ],
+      "@papx/shared/ui-solicitudes": [
+        "./src/app/shared/ui-solicitudes/index.ts"
+      ],
+
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

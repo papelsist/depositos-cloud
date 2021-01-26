@@ -1,0 +1,47 @@
+[
+  {
+    "id": "71c52184-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 0.0,
+    "importe": 100.0
+  },
+  {
+    "id": "71c523be-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 10.0,
+    "importe": 1000.0
+  },
+  {
+    "id": "71c523f0-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 11.0,
+    "importe": 5000.0
+  },
+  {
+    "id": "71c52418-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 13.0,
+    "importe": 12000.0
+  },
+  {
+    "id": "71c52436-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 14.0,
+    "importe": 21500.0
+  },
+  {
+    "id": "71c5245e-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 15.0,
+    "importe": 46000.0
+  },
+  {
+    "id": "71c5247c-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 16.0,
+    "importe": 82000.0
+  },
+  {
+    "id": "71c5249a-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 17.0,
+    "importe": 150000.0
+  },
+  {
+    "id": "71c524d6-eb2b-11e7-b1f8-b4b52f67eab0",
+    "descuento": 18.0,
+    "importe": 30000000.0
+  }
+]
