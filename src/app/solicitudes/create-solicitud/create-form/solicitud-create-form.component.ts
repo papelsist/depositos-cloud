@@ -14,10 +14,10 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { merge, Subject, combineLatest } from 'rxjs';
-import { map, tap, takeUntil } from 'rxjs/operators';
+import { merge, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { Cartera, SolicitudDeDepositoCreateDto } from '@papx/models';
+import { Cartera, Cliente, SolicitudDeDeposito } from '@papx/models';
 
 @Component({
   selector: 'papx-solicitud-create-form',
@@ -26,7 +26,7 @@ import { Cartera, SolicitudDeDepositoCreateDto } from '@papx/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
-  @Output() save = new EventEmitter<SolicitudDeDepositoCreateDto>();
+  @Output() save = new EventEmitter<Partial<SolicitudDeDeposito>>();
   @Input() tipo: Cartera;
   form: FormGroup;
 
@@ -135,10 +135,33 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
     // const controls = [this.controls.efectivo, this.controls.cheue, this.controls.transferencia];
     return this.form.get('total').dirty;
   }
+
   onSubmit() {
     if (this.form.valid) {
-      const payload = this.form.getRawValue();
+      const cliente = this.getCliente();
+      const payload: Partial<SolicitudDeDeposito> = {
+        ...this.form.getRawValue(),
+        cliente,
+        sbc: this.getSbc(),
+        status: 'PENDIENTE',
+      };
       this.save.emit(payload);
+    }
+  }
+
+  getCliente(): Partial<Cliente> {
+    const { id, clave, nombre } = this.form.get('cliente').value;
+    return { id, clave, nombre };
+  }
+
+  getSbc(): boolean {
+    const cheque = this.form.get('cheque').value;
+    if (cheque > 0.0) {
+      const banco = this.form.get('banco').value;
+      const cuenta = this.form.get('cuenta').value;
+      return banco.id !== cuenta.banco;
+    } else {
+      return false;
     }
   }
 }

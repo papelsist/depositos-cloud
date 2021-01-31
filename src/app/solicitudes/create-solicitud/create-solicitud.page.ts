@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { Cartera, carteraDisplayName, SolicitudDeDeposito } from '@papx/models';
+import { SolicitudesService } from '@papx/data-access';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-solicitud',
@@ -14,12 +16,14 @@ export class CreateSolicitudPage implements OnInit {
     cliente: new FormControl(null, [Validators.required]),
   });
 
-  constructor() {}
+  constructor(private service: SolicitudesService, private router: Router) {}
 
   ngOnInit() {}
 
-  onSave(event: Partial<SolicitudDeDeposito>) {
+  async onSave(event: Partial<SolicitudDeDeposito>) {
     console.log('Salvar solicitud: ', event);
+    const sol = this.service.save(event);
+    this.router.navigate(['solicitudes']);
   }
 
   get carteraName() {

@@ -7,14 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { PendientesPageRoutingModule } from './pendientes-routing.module';
 
 import { PendientesPage } from './pendientes.page';
+import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PendientesPageRoutingModule
+    PendientesPageRoutingModule,
+    SharedUiSolicitudesModule,
   ],
-  declarations: [PendientesPage]
+  declarations: [PendientesPage],
 })
 export class PendientesPageModule {}

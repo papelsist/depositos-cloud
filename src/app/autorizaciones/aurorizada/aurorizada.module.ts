@@ -1,23 +1,26 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { PendientesPageRoutingModule } from './pendientes-routing.module';
-
-import { PendientesPage } from './pendientes.page';
+import { AurorizadaPage } from './aurorizada.page';
 import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
-import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PendientesPageRoutingModule,
+    RouterModule.forChild([
+      {
+        path: '',
+        component: AurorizadaPage,
+      },
+    ]),
     SharedUiSolicitudesModule,
   ],
-  declarations: [PendientesPage, AutorizarModalComponent],
+  declarations: [AurorizadaPage],
 })
-export class PendientesPageModule {}
+export class AurorizadaPageModule {}

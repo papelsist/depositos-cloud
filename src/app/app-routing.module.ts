@@ -1,40 +1,40 @@
-import { NgModule } from "@angular/core";
-import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
+import { NgModule } from '@angular/core';
+import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: "home",
+    path: 'home',
     loadChildren: () =>
-      import("./home/home.module").then((m) => m.HomePageModule),
+      import('./home/home.module').then((m) => m.HomePageModule),
   },
   {
-    path: "",
-    redirectTo: "home",
-    pathMatch: "full",
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
   },
   {
-    path: "solicitudes",
+    path: 'solicitudes',
     loadChildren: () =>
-      import("./solicitudes/solicitudes-tab/solicitudes-tab.module").then(
+      import('./solicitudes/solicitudes-tab/solicitudes-tab.module').then(
         (m) => m.SolicitudesTabPageModule
       ),
   },
   {
-    path: "autotirzaciones",
+    path: 'autorizaciones',
     loadChildren: () =>
       import(
-        "./autorizaciones/autotirzaciones-tab/autotirzaciones-tab.module"
+        './autorizaciones/autotirzaciones-tab/autotirzaciones-tab.module'
       ).then((m) => m.AutotirzacionesTabPageModule),
   },
   {
-    path: "login",
+    path: 'login',
     loadChildren: () =>
-      import("./@auth/login/login.module").then((m) => m.LoginPageModule),
+      import('./@auth/login/login.module').then((m) => m.LoginPageModule),
   },
   {
-    path: "sign-up",
+    path: 'sign-up',
     loadChildren: () =>
-      import("./@auth/sign-up/sign-up.module").then((m) => m.SignUpPageModule),
+      import('./@auth/sign-up/sign-up.module').then((m) => m.SignUpPageModule),
   },
 ];
 
@@ -42,7 +42,7 @@ const routes: Routes = [
   imports: [
     RouterModule.forRoot(routes, {
       preloadingStrategy: PreloadAllModules,
-      relativeLinkResolution: "legacy",
+      relativeLinkResolution: 'legacy',
     }),
   ],
   exports: [RouterModule],

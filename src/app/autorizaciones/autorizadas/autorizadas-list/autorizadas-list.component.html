@@ -1,0 +1,22 @@
+<ion-list>
+  <ion-item *ngFor="let sol of solicitudes" button [routerLink]="sol.id">
+    <ion-label>
+      <div class="ion-text-center row">
+        <ion-text color="success">
+          <h2>
+            {{ sol.total | currency }}
+            <small> ({{ sol.transferencia > 0 ? 'TRS' : 'DEP' }}) </small>
+          </h2>
+        </ion-text>
+      </div>
+      <div class="row">
+        <p>{{ sol.cuenta.descripcion }} ({{ sol.cuenta.numero }})</p>
+      </div>
+      <p class="row">
+        <span>Fecha: {{ sol.fechaDeposito | date: 'dd/MM/yyyy' }}</span>
+        <span> Aut: {{ sol.autorizacion.fecha | date: 'dd/MM/yyyy' }}</span>
+      </p>
+    </ion-label>
+    <ion-note slot="end">TACUBA</ion-note>
+  </ion-item>
+</ion-list>

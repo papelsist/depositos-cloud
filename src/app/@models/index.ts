@@ -7,3 +7,5 @@ export * from './direccion';
 export * from './dtos';
 export * from './cliente';
 export * from './cartera';
+export * from './sucursal';
+export * from './autorizacion';

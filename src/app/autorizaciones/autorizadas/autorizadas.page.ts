@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SolicitudesService } from '@papx/data-access';
 
 @Component({
   selector: 'app-autorizadas',
@@ -6,10 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./autorizadas.page.scss'],
 })
 export class AutorizadasPage implements OnInit {
+  autorizadas$ = this.service.autorizadas$;
+  constructor(private service: SolicitudesService) {}
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

@@ -1,32 +1,39 @@
-import { NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 
-import { SolicitudesTabPage } from "./solicitudes-tab.page";
+import { SolicitudesTabPage } from './solicitudes-tab.page';
 
 const routes: Routes = [
   {
-    path: "",
+    path: '',
     component: SolicitudesTabPage,
     children: [
       {
-        path: "pendientes",
+        path: 'pendientes',
         loadChildren: () =>
-          import("../pendientes/pendientes.module").then(
+          import('../pendientes/pendientes.module').then(
             (m) => m.PendientesPageModule
+          ),
+      },
+      {
+        path: 'rechazadas',
+        loadChildren: () =>
+          import('../rechazadas/rechazadas.module').then(
+            (m) => m.RechazadasPageModule
           ),
       },
 
       {
-        path: "",
-        redirectTo: "/solicitudes/pendientes",
-        pathMatch: "full",
+        path: '',
+        redirectTo: '/solicitudes/pendientes',
+        pathMatch: 'full',
       },
     ],
   },
   {
-    path: "create",
+    path: 'create',
     loadChildren: () =>
-      import("../create-solicitud/create-solicitud.module").then(
+      import('../create-solicitud/create-solicitud.module').then(
         (m) => m.CreateSolicitudPageModule
       ),
   },
