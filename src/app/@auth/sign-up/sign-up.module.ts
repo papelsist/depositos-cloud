@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
-
-import { SignUpPageRoutingModule } from './sign-up-routing.module';
 
 import { SignUpPage } from './sign-up.page';
 
@@ -12,9 +11,15 @@ import { SignUpPage } from './sign-up.page';
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
-    SignUpPageRoutingModule
+    RouterModule.forChild([
+      {
+        path: '',
+        component: SignUpPage,
+      },
+    ]),
   ],
-  declarations: [SignUpPage]
+  declarations: [SignUpPage],
 })
 export class SignUpPageModule {}

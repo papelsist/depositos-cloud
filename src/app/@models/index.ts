@@ -1,3 +1,4 @@
+export * from './user';
 export * from './cliente';
 export * from './banco';
 export * from './cuenta-de-banco';
