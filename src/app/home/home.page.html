@@ -39,6 +39,15 @@
           </ion-list>
         </ion-col>
       </ion-row>
+      <ion-row>
+        <ion-col *ngIf="user$ | async as user">
+          <pre>
+            Usuario: {{user.displayName}} <br>
+            Display name: {{user.email}} <br>
+            Email verified: {{user.emailVerified}}
+          </pre>
+        </ion-col>
+      </ion-row>
     </ion-grid>
   </div>
 </ion-content>

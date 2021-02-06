@@ -38,16 +38,28 @@ export class LoginPage extends BaseComponent implements OnInit {
   }
 
   login() {
-    // this.startLoading();
     this.loading$.next(true);
-    setTimeout(() => {
+    setTimeout(async () => {
       const { email, password } = this.form.value;
-      this.service
-        .signIn(email, password)
-        .then((user) => console.log('Signin exitoso...', user))
-        .catch((err) => console.error('ERRROR:', err))
-        .finally(() => this.loading$.next(false));
-    }, 5000);
+      try {
+        const user = await this.service.signIn(email, password);
+        this.router.navigate(['/']);
+        console.log('Login success');
+        /*
+        if (!user.emailVerified) {
+          await user.sendEmailVerification({
+            url: 'http://localhost:8100',
+            handleCodeInApp: false,
+          });
+          console.log('Usuario sin veriicar Verification mail sent');
+        }
+        */
+      } catch (error) {
+        this.error$.next(error.message);
+      } finally {
+        this.loading$.next(false);
+      }
+    }, 1000);
   }
 
   async startLoading() {
@@ -80,7 +92,6 @@ export class LoginPage extends BaseComponent implements OnInit {
   }
 
   doEnter(event) {
-    console.log('Enter pressed: ', event);
     if (this.form.valid) {
       this.login();
     }

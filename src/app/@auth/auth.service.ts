@@ -1,25 +1,66 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireFunctions } from '@angular/fire/functions';
 
-import { BehaviorSubject, throwError } from 'rxjs';
+import { throwError, from, of } from 'rxjs';
+import {
+  catchError,
+  filter,
+  map,
+  shareReplay,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 
-import firebase from 'firebase/app';
 import { User } from '../@models/user';
 import { mapUser } from './utils';
-import { catchError, map } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  readonly currentUser$ = this.auth.user.pipe(map(mapUser));
+  // readonly currentUser$ = this.auth.user;
+  readonly hostUrl = 'http://localhost:8100/';
+  readonly currentUser$ = this.auth.user.pipe(
+    map((user) => (user ? mapUser(user) : null)),
+    shareReplay()
+  );
+
+  /*
+  readonly currentClaims$ = this.auth.user.pipe(
+    filter((user) => user != null),
+    map((user) => user.getIdTokenResult()),
+    switchMap((idtoken) => from(idtoken).pipe(map((id) => id.claims)))
+  );
+  */
+
+  readonly userInfo$ = this.currentUser$.pipe(
+    switchMap((user) => {
+      if (user) {
+        console.log('Fetchin user data:', user.uid);
+        const doc = this.firestore.doc(`users/${user.uid}`);
+        return doc.valueChanges();
+        // console.log(docRef.valueChanges)
+        // return this.firestore.collection('users').doc(user.uid).get();
+        // return of({});
+      } else return of({});
+    }),
+    // shareReplay(),
+    catchError((err) => throwError(err))
+  );
 
   constructor(
     private http: HttpClient,
-    private readonly auth: AngularFireAuth,
-    private fns: AngularFireFunctions
+    public readonly auth: AngularFireAuth,
+    private fns: AngularFireFunctions,
+    private firestore: AngularFirestore
   ) {}
+
+  async singOut() {
+    await this.auth.signOut();
+  }
 
   async signInAnonymously() {
     const { user } = await this.auth.signInAnonymously();
@@ -40,26 +81,52 @@ export class AuthService {
           message = 'Usuario no registrado';
           break;
         case 'auth/wrong-password':
-          message = 'Credenciales invalidas';
+          message = 'Nombre de corrreo ó contraseña incorrectas';
           break;
         default:
           message = error.message;
           break;
       }
-      // console.error('SIGN IN ERROR: ', message);
       throw new Error(message);
-
-      // throw new Error(`Cant sign in  Error: ${ex}`);
     }
   }
 
   async createUser(email: string, password: string) {
-    return this.auth.createUserWithEmailAndPassword(email, password);
+    const credentials = await this.auth.createUserWithEmailAndPassword(
+      email,
+      password
+    );
+    await credentials.user.sendEmailVerification({
+      url: this.hostUrl,
+      handleCodeInApp: false,
+    });
+    return credentials;
   }
 
-  createSiipapUser(email: string, password: string) {
-    const data = { email, password };
+  sendEmailVerification(user: User) {
+    return user.firebaseUser.sendEmailVerification({
+      url: this.hostUrl,
+      handleCodeInApp: false,
+    });
+  }
+
+  createSiipapUser(email: string, password: string, displayName: string) {
+    const data = { email, password, displayName };
     const callable = this.fns.httpsCallable('createSiipapUser');
-    return callable(data).pipe(catchError((err) => throwError(err)));
+    return callable(data).pipe(
+      map(() => this.auth.signInWithEmailAndPassword(email, password)),
+      map(async (p) => {
+        const d = await p;
+        const user = d.user;
+        await user.sendEmailVerification({
+          url: this.hostUrl,
+          handleCodeInApp: false,
+        });
+        console.log('Usuario sin veriicar Verification mail sent');
+        return user;
+      }),
+      tap((user) => {}),
+      catchError((err) => throwError(err))
+    );
   }
 }

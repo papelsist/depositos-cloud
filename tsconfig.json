@@ -40,6 +40,9 @@
       "@papx/shared/ui-solicitudes": [
         "./src/app/shared/ui-solicitudes/index.ts"
       ],
+      "@papx/auth": [
+        "./src/app/@auth/index.ts"
+      ],
 
     }
   },

@@ -1,11 +1,21 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 
+import {
+  redirectLoggedInToHome,
+  redirectUnverifiedToPending,
+  redirectVeifiedToHome,
+  redirectUnauthorized,
+} from '@papx/auth';
+
+import { canActivate } from '@angular/fire/auth-guard';
+
 const routes: Routes = [
   {
     path: 'home',
     loadChildren: () =>
       import('./home/home.module').then((m) => m.HomePageModule),
+    ...canActivate(redirectUnverifiedToPending),
   },
   {
     path: '',
@@ -30,12 +40,14 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () =>
       import('./@auth/login/login.module').then((m) => m.LoginPageModule),
+    ...canActivate(redirectLoggedInToHome),
   },
-  // {
-  //   path: 'sign-up',
-  //   loadChildren: () =>
-  //     import('./@auth/sign-up/sign-up.module').then((m) => m.SignUpPageModule),
-  // },
+  {
+    path: 'pending',
+    loadChildren: () =>
+      import('./@auth/pending/pending.module').then((m) => m.PendingPageModule),
+    ...canActivate(redirectUnauthorized),
+  },
 ];
 
 @NgModule({

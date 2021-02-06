@@ -62,7 +62,19 @@ export class SignUpPage implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    const val = {
+      email: 'luxsoft.cancino@gmail.com',
+      displayName: 'Ruben Cancino',
+      password: 'dodgers6',
+    };
+    this.form.patchValue(val);
+
+    // DEBUG
+    this.authService.currentUser$.subscribe((user) =>
+      console.log('Current user: ', user)
+    );
+  }
 
   get confirm() {
     return this.form.get('confirmPassword');
@@ -70,8 +82,6 @@ export class SignUpPage implements OnInit {
 
   async signup() {
     const { email, password, displayName } = this.form.value;
-
-    console.log('Create user with: ', email, password);
 
     const loading = await this.loadingController.create({
       cssClass: 'sign-in-loading',
@@ -102,11 +112,13 @@ export class SignUpPage implements OnInit {
       .then(() => loading.dismiss());
     */
     this.authService
-      .createSiipapUser(email, password)
+      .createSiipapUser(email, password, displayName)
       .pipe(finalize(() => loading.dismiss()))
       .subscribe(
-        (res) => {
-          console.log('Res: ', res);
+        async (res) => {
+          const user = await res;
+          console.log('User registered: ', user);
+          this.router.navigate(['/']);
         },
         (err) => console.error('Signup Error: ', err)
       );

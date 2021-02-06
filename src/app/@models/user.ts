@@ -9,4 +9,5 @@ export interface User {
   email: string | null;
   emailVerified: boolean;
   lastSignInTime: string;
+  firebaseUser: firebase.User;
 }

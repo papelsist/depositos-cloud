@@ -22,5 +22,6 @@ export const mapUser = (credentials: firebase.User): User => {
     phoneNumber,
     photoURL,
     lastSignInTime: metadata.lastSignInTime,
+    firebaseUser: credentials,
   };
 };

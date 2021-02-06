@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
-
 import * as admin from 'firebase-admin';
+import fetch from 'node-fetch';
+
 admin.initializeApp();
 const firestore = admin.firestore();
 
@@ -44,3 +45,18 @@ export const importarUsuarios = functions.https.onRequest(async (req, res) => {
   });
   res.send(users);
 });
+
+export const importarEmpleados = () => {
+  return functions.https.onRequest(async (request, response) => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((res) => res.json())
+      .then((json) => {
+        console.log('First user in the array:');
+        console.log(json[0]);
+        console.log('Name of the first user in the array:');
+        console.log(json[0].name);
+        response.json(json);
+      })
+      .catch((error) => response.status(500).send(error));
+  });
+};
