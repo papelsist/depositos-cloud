@@ -15,7 +15,7 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () =>
       import('./home/home.module').then((m) => m.HomePageModule),
-    ...canActivate(redirectUnverifiedToPending),
+    // ...canActivate(redirectUnverifiedToPending),
   },
   {
     path: '',
@@ -40,13 +40,13 @@ const routes: Routes = [
     path: 'login',
     loadChildren: () =>
       import('./@auth/login/login.module').then((m) => m.LoginPageModule),
-    ...canActivate(redirectLoggedInToHome),
+    // ...canActivate(redirectLoggedInToHome),
   },
   {
     path: 'pending',
     loadChildren: () =>
       import('./@auth/pending/pending.module').then((m) => m.PendingPageModule),
-    ...canActivate(redirectUnauthorized),
+    // ...canActivate(redirectUnauthorized),
   },
 ];
 

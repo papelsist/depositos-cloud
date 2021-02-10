@@ -19,6 +19,7 @@ import { Banco } from '@papx/models';
         placeholder="Seleccione un banco"
         [compareWith]="compareWith"
         interface="popover"
+        [interfaceOptions]="customPopoverOptions"
         (ionChange)="onSelection($event)"
       >
         <ion-select-option *ngFor="let banco of bancos" [value]="banco">
@@ -27,7 +28,15 @@ import { Banco } from '@papx/models';
       </ion-select>
     </ion-item>
   `,
-  styles: [],
+  styles: [
+    `
+      ion-select {
+        width: 100%;
+
+        justify-content: center;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -44,6 +53,12 @@ export class BancoFieldComponent implements OnInit, ControlValueAccessor {
   value: Banco;
 
   @Input() bancos: Banco[] = [];
+
+  customPopoverOptions: any = {
+    header: 'Catálogo de bancos',
+    message: 'Seleccione el banco',
+    cssClass: 'banco-field-popup',
+  };
 
   constructor(private cd: ChangeDetectorRef, private service: BancosService) {}
 

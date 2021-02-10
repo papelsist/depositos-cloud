@@ -89,7 +89,8 @@
           readonly
         >
         </ion-input>
-        <ion-icon slot="start" name="calendar-number"></ion-icon>
+
+        <ion-icon slot="start" name="calendar-outline"></ion-icon>
         <ion-note slot="end" [color]="retrasoColor">
           {{ retraso }}
         </ion-note>
@@ -98,7 +99,7 @@
       <ion-item>
         <ion-label position="floating"> Sucursal: </ion-label>
         <ion-input
-          value="{{ solicitud.sucursal ? solicitud.sucursal.nombre : 'ND' }}"
+          value="{{ solicitud.sucursal ? solicitud.sucursal : 'ND' }}"
           readonly
         >
         </ion-input>

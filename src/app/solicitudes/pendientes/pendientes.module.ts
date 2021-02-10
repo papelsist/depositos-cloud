@@ -8,6 +8,9 @@ import { PendientesPageRoutingModule } from './pendientes-routing.module';
 
 import { PendientesPage } from './pendientes.page';
 import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
+import { SolicitudesCardsViewComponent } from './cards-view/solicitudes-cards-view.component';
+import { SolicitudesListViewComponent } from './list-view/solicitudes-list-view.component';
+import { SolicitudListItemComponent } from './list-view/solicitud-list-item.component';
 
 @NgModule({
   imports: [
@@ -17,6 +20,11 @@ import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
     PendientesPageRoutingModule,
     SharedUiSolicitudesModule,
   ],
-  declarations: [PendientesPage],
+  declarations: [
+    PendientesPage,
+    SolicitudesCardsViewComponent,
+    SolicitudesListViewComponent,
+    SolicitudListItemComponent,
+  ],
 })
 export class PendientesPageModule {}

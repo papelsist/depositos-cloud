@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/solicitudes"></ion-back-button>
     </ion-buttons>
-    <ion-title>Alta de solicitud de depósito</ion-title>
+    <ion-title>Solicitud de depósito</ion-title>
     <ion-buttons slot="end">
       <ion-button color="tertiary" fill="outline" shape="round" strong="true">
         {{carteraName}}
@@ -12,9 +12,17 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<ion-content class="ion-padding" *ngIf="session$ | async as session">
   <papx-solicitud-create-form
     [tipo]="cartera"
-    (save)="onSave($event)"
+    [sucursal]="session.sucursal"
+    [solcita]="session.nombre"
+    (save)="onSave($event, session)"
+    (valueReady)="validarDuplicado($event)"
   ></papx-solicitud-create-form>
 </ion-content>
+<ion-footer *ngIf="session$ | async as session">
+  <ion-toolbar>
+    <ion-title size="small" slot="end"> {{session.displayName}} </ion-title>
+  </ion-toolbar>
+</ion-footer>

@@ -5,7 +5,7 @@ import firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireFunctions } from '@angular/fire/functions';
 
-import { throwError, from, of } from 'rxjs';
+import { throwError, from, of, Observable } from 'rxjs';
 import {
   catchError,
   filter,
@@ -15,7 +15,7 @@ import {
   tap,
 } from 'rxjs/operators';
 
-import { User } from '../@models/user';
+import { User, UserInfo } from '../@models/user';
 import { mapUser } from './utils';
 import { AngularFirestore } from '@angular/fire/firestore';
 
@@ -24,38 +24,22 @@ export class AuthService {
   // readonly currentUser$ = this.auth.user;
   readonly hostUrl = 'http://localhost:8100/';
   readonly currentUser$ = this.auth.user.pipe(
-    map((user) => (user ? mapUser(user) : null)),
-    shareReplay()
+    map((user) => (user ? mapUser(user) : null))
+    // shareReplay()
   );
 
-  /*
-  readonly currentClaims$ = this.auth.user.pipe(
-    filter((user) => user != null),
-    map((user) => user.getIdTokenResult()),
-    switchMap((idtoken) => from(idtoken).pipe(map((id) => id.claims)))
-  );
-  */
-
-  readonly userInfo$ = this.currentUser$.pipe(
+  readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => {
-      if (user) {
-        console.log('Fetchin user data:', user.uid);
-        const doc = this.firestore.doc(`users/${user.uid}`);
-        return doc.valueChanges();
-        // console.log(docRef.valueChanges)
-        // return this.firestore.collection('users').doc(user.uid).get();
-        // return of({});
-      } else return of({});
+      return user ? this.getUserByUid(user.uid) : of(null);
     }),
-    // shareReplay(),
     catchError((err) => throwError(err))
   );
 
   constructor(
     private http: HttpClient,
     public readonly auth: AngularFireAuth,
-    private fns: AngularFireFunctions,
-    private firestore: AngularFirestore
+    private readonly fns: AngularFireFunctions,
+    private readonly firestore: AngularFirestore
   ) {}
 
   async singOut() {
@@ -128,5 +112,17 @@ export class AuthService {
       tap((user) => {}),
       catchError((err) => throwError(err))
     );
+  }
+
+  getUserByUid(uid: string): Observable<UserInfo | null> {
+    return this.firestore
+      .collection<UserInfo>('users', (ref) => {
+        return ref.where('uid', '==', uid).limit(1);
+      })
+      .valueChanges()
+      .pipe(
+        map((users) => (users.length > 0 ? users[0] : null)),
+        catchError((err) => throwError(err))
+      );
   }
 }

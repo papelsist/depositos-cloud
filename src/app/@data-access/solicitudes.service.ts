@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { AngularFirestore } from '@angular/fire/firestore';
 import firebase from 'firebase/app';
 
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map, shareReplay, take } from 'rxjs/operators';
+import parseJSON from 'date-fns/parseJSON';
+import isSameDay from 'date-fns/isSameDay';
 
 import { SolicitudDeDeposito } from '../@models/solicitud-de-deposito';
 import { Autorizacion, AutorizacionRechazo } from '../@models/autorizacion';
@@ -71,10 +73,24 @@ export class SolicitudesService {
     return sol;
   }
 
-  findPendientes(): Observable<SolicitudDeDeposito[]> {
+  findAllPendientes(): Observable<SolicitudDeDeposito[]> {
     return this.afs
       .collection<SolicitudDeDeposito>('solicitudes')
-      .valueChanges({ idField: 'id' });
+      .valueChanges({ idField: 'id' })
+      .pipe(catchError((err) => throwError(err)));
+  }
+
+  findPendientesPorSucursal(
+    sucursal: string,
+    max: number = 100
+  ): Observable<SolicitudDeDeposito[]> {
+    return this.afs
+      .collection<SolicitudDeDeposito>('solicitudes', (ref) => {
+        let query = ref.where('sucursal', '==', sucursal);
+        return query.limit(max);
+      })
+      .valueChanges({ idField: 'id' })
+      .pipe(catchError((err) => throwError(err)));
   }
 
   findPendientesPorAutorizar(): Observable<SolicitudDeDeposito[]> {
@@ -107,5 +123,30 @@ export class SolicitudesService {
       status: 'RECHAZADO',
       lastUpdated: firebase.firestore.Timestamp.now(),
     });
+  }
+
+  buscarDuplicado(sol: Partial<SolicitudDeDeposito>) {
+    const { total, cuenta, banco } = sol;
+    const fechaDeposito = parseJSON(sol.fechaDeposito);
+    return this.afs
+      .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
+        ref
+          .where('total', '==', total)
+          .where('cuenta.id', '==', cuenta.id)
+          .where('banco.id', '==', banco.id)
+          .limit(100)
+      )
+      .valueChanges()
+      .pipe(
+        take(1),
+        map((rows) =>
+          rows.filter((item) => {
+            const fdep = parseJSON(item.fechaDeposito);
+            return isSameDay(fechaDeposito, fdep);
+          })
+        ),
+        catchError((err) => throwError(err))
+      )
+      .toPromise();
   }
 }

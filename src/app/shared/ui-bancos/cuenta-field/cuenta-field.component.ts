@@ -74,8 +74,8 @@ export class CuentaFieldComponent implements OnInit, ControlValueAccessor {
   @Input() cuentas: CuentaDeBanco[] = [];
 
   customPopoverOptions: any = {
-    cssClass: 'my-custom-class',
-    translucent: true,
+    header: 'Catálogo de cuentas',
+    cssClass: 'cuenta-de-banco-field-popup ',
   };
 
   constructor(private cd: ChangeDetectorRef, private service: BancosService) {}

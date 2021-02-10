@@ -14,7 +14,7 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { merge, Subject } from 'rxjs';
+import { merge, Subject, combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { Cartera, Cliente, SolicitudDeDeposito } from '@papx/models';
@@ -27,7 +27,10 @@ import { Cartera, Cliente, SolicitudDeDeposito } from '@papx/models';
 })
 export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
   @Output() save = new EventEmitter<Partial<SolicitudDeDeposito>>();
+  @Output() valueReady = new EventEmitter<Partial<SolicitudDeDeposito>>();
   @Input() tipo: Cartera;
+  @Input() sucursal: string;
+  @Input() solcita: string;
   form: FormGroup;
 
   controls: { [key: string]: AbstractControl };
@@ -50,15 +53,7 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
 
     this.registerTransferenciaListener();
     this.registerEfectivoChequeListener();
-
-    // DEBUG only
-    /*
-    this.form.valueChanges.subscribe((val) => {
-      if (this.form.valid) {
-        console.log('Form value: ', val);
-      }
-    });
-    */
+    this.validacionDeNoDuplicados();
   }
 
   private buildForm(): FormGroup {
@@ -73,7 +68,8 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
       total: [null, [Validators.required, Validators.min(10.0)]],
       referencia: [null, [Validators.required]],
       fechaDeposito: [null, [Validators.required]],
-      solicita: [null],
+      solicita: [this.solcita, [Validators.required]],
+      sucursal: [this.sucursal, [Validators.required]],
     });
   }
 
@@ -98,6 +94,20 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
         const che = (cheque.value as number) || 0.0;
         const total = ef + che;
         this.form.get('total').setValue(total);
+      });
+  }
+
+  private validacionDeNoDuplicados() {
+    console.log('Registrando validacion de no duplicado');
+    const fechaDeposito$ = this.form.get('fechaDeposito').valueChanges;
+    const total$ = this.form.get('total').valueChanges;
+    const banco$ = this.form.get('banco').valueChanges;
+    const cuenta$ = this.form.get('cuenta').valueChanges;
+    const merg = combineLatest([fechaDeposito$, total$, banco$, cuenta$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([fechaDeposito, total, banco, cuenta]) => {
+        const command = { fechaDeposito, total, banco, cuenta };
+        this.valueReady.emit(command);
       });
   }
 

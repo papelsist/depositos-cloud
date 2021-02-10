@@ -9,6 +9,8 @@ import { SolicitudCardComponent } from './solicitud-card/solicitud-card.componen
 import { AutorizacionCardComponent } from './autorizacion-card/autorizacion-card.component';
 import { SolicitudPanelComponent } from './solicitud-panel/solicitud-panel.component';
 import { AutorizacionPanelComponent } from './autorizacion-panel/autorizacion-panel.component';
+import { SolicitudDetailComponent } from './solicitud-detail/solicitud-detail.component';
+import { SolicitudDetailModalComponent } from './solicitud-detail-modal/solicitud-detail-modal.component';
 
 @NgModule({
   imports: [
@@ -24,12 +26,16 @@ import { AutorizacionPanelComponent } from './autorizacion-panel/autorizacion-pa
     AutorizacionCardComponent,
     AutorizacionPanelComponent,
     SolicitudPanelComponent,
+    SolicitudDetailComponent,
+    SolicitudDetailModalComponent,
   ],
   exports: [
     SolicitudCardComponent,
     AutorizacionCardComponent,
     SolicitudPanelComponent,
     AutorizacionPanelComponent,
+    SolicitudDetailComponent,
+    SolicitudDetailModalComponent,
   ],
 })
 export class SharedUiSolicitudesModule {}

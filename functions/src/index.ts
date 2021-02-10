@@ -1,8 +1,11 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { initSdk, getDatabase } from './init';
+import { getFolio } from './folios';
 
-admin.initializeApp();
-const firestore = admin.firestore();
+// admin.initializeApp();
+initSdk();
+const firestore = getDatabase();
 
 // const cors = require('cors')({
 //   origin: true,
@@ -95,3 +98,24 @@ const createSiipapUser = functions.https.onCall(async (data, context) => {
 });
 
 exports.createSiipapUser = createSiipapUser;
+
+export const onSolicitudCreate = functions.firestore
+  .document('solicitudes/{solicitudId}')
+  .onCreate(async (snap, context) => {
+    return getDatabase().runTransaction(async (transaction) => {
+      const { sucursal } = snap.data();
+      const command = {
+        sucursal,
+        transaction,
+        db: getDatabase(),
+        entidad: 'deposito-solicitud',
+      };
+      const folio = await getFolio(command);
+      const FieldValue = admin.firestore.FieldValue;
+      const payload = {
+        folio,
+        dateCreated: FieldValue.serverTimestamp(),
+      };
+      transaction.update(snap.ref, payload);
+    });
+  });
