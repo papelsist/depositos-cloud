@@ -1,4 +1,10 @@
-import { NgModule, Optional, SkipSelf, isDevMode } from '@angular/core';
+import {
+  NgModule,
+  Optional,
+  SkipSelf,
+  isDevMode,
+  APP_INITIALIZER,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { throwIfAlreadyLoaded } from '../utils/angular';
@@ -6,7 +12,11 @@ import { throwIfAlreadyLoaded } from '../utils/angular';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireFunctionsModule } from '@angular/fire/functions';
-import { USE_EMULATOR as USE_AUTH_EMULATOR } from '@angular/fire/auth';
+import {
+  AngularFireAuth,
+  AngularFireAuthModule,
+  USE_EMULATOR as USE_AUTH_EMULATOR,
+} from '@angular/fire/auth';
 import { USE_EMULATOR as USE_FIRESTORE_EMULATOR } from '@angular/fire/firestore';
 import {
   USE_EMULATOR as USE_FUNCTIONS_EMULATOR,
@@ -16,11 +26,21 @@ import {
 
 import { environment } from '../../environments/environment';
 
+export function initializeApp1(afa: AngularFireAuth): any {
+  return () => {
+    return new Promise((resolve: any) => {
+      afa.useEmulator(`http://${location.hostname}:9099/`);
+      setTimeout(() => resolve(), 1000); // delay Angular initialization by 100ms
+    });
+  };
+}
+
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireFunctionsModule,
   ],
@@ -41,6 +61,13 @@ import { environment } from '../../environments/environment';
     {
       provide: FUNCTIONS_ORIGIN,
       useFactory: () => (isDevMode() ? undefined : location.origin),
+    },
+    /* Delay the app initialization process by 100ms*/
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp1,
+      deps: [AngularFireAuth],
+      multi: true,
     },
   ],
 })

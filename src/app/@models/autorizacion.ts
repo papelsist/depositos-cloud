@@ -1,5 +1,8 @@
+import { UserInfo } from './user';
+import firebase from 'firebase/app';
+
 export interface Autorizacion {
-  user: string;
+  user: Partial<UserInfo>;
   fecha: string;
   tipo: TipoDeAutorizacion;
   autorizo?: string;
@@ -11,9 +14,10 @@ export type TipoDeAutorizacion =
   | 'VENTA_SIN_EXISTENCIA';
 
 export interface AutorizacionRechazo {
-  user: string;
+  user: Partial<UserInfo>;
   fecha: string;
   tipo: string;
   motivo: string;
   comentario?: string;
+  dateCreated?: firebase.firestore.Timestamp;
 }

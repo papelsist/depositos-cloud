@@ -29,80 +29,129 @@ import {
       </ion-toolbar>
     </ion-header>
     <ion-content fullscreen class="ion-padding">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" class="ion-text-center">
-            <ion-text color="success">
-              <h2>
-                {{ solicitud.total | currency }}
-              </h2>
-            </ion-text>
-          </ion-col>
-          <ion-col size="12" class="ion-text-start">
-            <h3 class="row">
-              <span>Banco origen:</span>
-              <span>{{ solicitud.banco.nombre }}</span>
-            </h3>
-          </ion-col>
-          <ion-col size="12" class="ion-text-start">
-            <h3 class="row">
-              <span>Cuenta destino: </span>
-              <span
+      <ion-list>
+        <ion-item>
+          <ion-label>
+            <h2>
+              Folio: <ion-text color="primary">{{ solicitud.folio }}</ion-text>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>
+              Total:
+              <ion-text color="primary">{{
+                solicitud.total | currency
+              }}</ion-text>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>
+              Banco origen:
+              <ion-text color="primary">{{ solicitud.banco.nombre }}</ion-text>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>
+              Cuenta destino:
+              <ion-text color="primary"
                 >{{ solicitud.cuenta.descripcion }} ({{
                   solicitud.cuenta.numero
-                }})</span
-              >
-            </h3>
-          </ion-col>
-
-          <ion-col size="12" class="ion-text-start">
-            <h3 class="row">
-              <span>Fecha depósito: </span>
-              <span>{{ solicitud.fechaDeposito | date: 'dd/MM/yyyy' }}</span>
-            </h3>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-content>
-    <ion-footer>
-      <ion-button expand="block" (click)="autorizar()">
+                }})
+              </ion-text>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>
+              Fecha depósito:
+              <ion-text color="primary">{{
+                solicitud.fechaDeposito | date: 'dd/MM/yyyy'
+              }}</ion-text>
+            </h2>
+          </ion-label>
+          <ion-label>
+            <h2>
+              Fecha creado:
+              <ion-text color="primary">{{
+                solicitud.fecha | date: 'dd/MM/yyyy'
+              }}</ion-text>
+            </h2>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label>
+            <h2>{{ solicitud.cliente.nombre }}</h2>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+      <div class="duplicado-panel " *ngIf="posibleDuplicado as duplicado">
+        <ion-list>
+          <ion-list-header color="warning">
+            <ion-label class="ion-text-wrap">
+              <h2 class="ion-text-uppercase">
+                Posible duplicado con solicitud: {{ duplicado.folio }}
+                <span class="ion-padding-start">
+                  <ion-text
+                    [color]="duplicado.status === 'AUTORIZADO' ? 'dangeg' : ''"
+                  >
+                    ({{ duplicado.status }})
+                  </ion-text>
+                </span>
+              </h2>
+            </ion-label>
+          </ion-list-header>
+          <ion-item color="warning">
+            <ion-label>
+              <h2>
+                {{ duplicado.total | currency }}
+                <strong class="ion-padding-start"
+                  >({{ duplicado.fechaDeposito | date: 'dd/MM/yyyy' }})</strong
+                >
+              </h2>
+              <h3>Banco: {{ duplicado.banco.nombre }}</h3>
+              <h3>
+                Cuenta: {{ duplicado.cuenta.descripcion }}({{
+                  duplicado.cuenta.numero
+                }})
+              </h3>
+              <p>
+                {{ duplicado.cliente.nombre }}
+              </p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+      <ion-button expand="full" (click)="autorizar()">
         <ion-icon name="checkmark-done" slot="start"></ion-icon>
         <ion-label>Autorizar</ion-label>
       </ion-button>
-      <ion-button expand="block" (click)="rechazar()" color="danger">
-        <ion-icon name="arrow-undo" slot="start"></ion-icon>
-        <ion-label>Rechazar</ion-label>
-      </ion-button>
-    </ion-footer>
+    </ion-content>
   `,
-  styles: [
-    `
-      .row {
-        display: flex;
-        gap: 10px;
-        justify-content: space-between;
-        align-items: center;
-        span {
-          border: 1px solid red;
-        }
-      }
-    `,
-  ],
+  styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AutorizarModalComponent implements OnInit {
   @Input() solicitud: Partial<SolicitudDeDeposito>;
+  @Input() posibleDuplicado: Partial<SolicitudDeDeposito>;
   constructor(private modal: ModalController) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log('Posible: ', this.posibleDuplicado);
+  }
 
   dismissModal() {
     this.modal.dismiss();
   }
 
   autorizar() {
-    const autorizacion: Autorizacion = {
-      user: 'PENDIENTe',
+    const autorizacion: Partial<Autorizacion> = {
       fecha: new Date().toISOString(),
       tipo: 'TRANSACCION_BANCARIA',
       autorizo: 'PORTAL BANCARIO',
@@ -110,17 +159,6 @@ export class AutorizarModalComponent implements OnInit {
         this.solicitud.transferencia > 0 ? 'TRANSFERENCIA' : 'DEPOSITO'
       }`,
     };
-    this.modal.dismiss({ tipo: 'ACCEPT', autorizacion });
-  }
-
-  rechazar() {
-    const rechazo: AutorizacionRechazo = {
-      user: 'PENDIENT',
-      fecha: new Date().toISOString(),
-      tipo: 'TRANSACCION_BANCARIA',
-      motivo: 'FALTAN DATOS',
-      comentario: `PRUEBA DE RECHAZO`,
-    };
-    this.modal.dismiss({ tipo: 'REJECT', rechazo });
+    this.modal.dismiss(autorizacion);
   }
 }

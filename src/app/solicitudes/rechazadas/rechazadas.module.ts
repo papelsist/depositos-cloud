@@ -7,14 +7,20 @@ import { IonicModule } from '@ionic/angular';
 import { RechazadasPageRoutingModule } from './rechazadas-routing.module';
 
 import { RechazadasPage } from './rechazadas.page';
+import { RechazadasListComponent } from './list-view/rechazadas-list.component';
+import { RechazadaItemComponent } from './list-view/rechazada-item.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RechazadasPageRoutingModule
+    RechazadasPageRoutingModule,
   ],
-  declarations: [RechazadasPage]
+  declarations: [
+    RechazadasPage,
+    RechazadasListComponent,
+    RechazadaItemComponent,
+  ],
 })
 export class RechazadasPageModule {}

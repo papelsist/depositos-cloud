@@ -119,3 +119,25 @@ export const onSolicitudCreate = functions.firestore
       transaction.update(snap.ref, payload);
     });
   });
+
+export const rechazarSolicitud = functions.https.onCall(
+  async (data, context) => {
+    functions.logger.info('Rechazondo solicitud: ', data);
+    const { motivo, comentario, tipo, solicitud, user, fecha } = data;
+    const solicitudRef = getDatabase().doc(`solicitudes/${solicitud}`);
+    const rechazo = {
+      fecha,
+      tipo,
+      motivo,
+      comentario,
+      userId: context.auth?.uid,
+      user,
+      dateCreated: admin.firestore.FieldValue.serverTimestamp(),
+    };
+    const result = await solicitudRef.update({
+      rechazo,
+      status: 'RECHAZADO',
+    });
+    return result;
+  }
+);

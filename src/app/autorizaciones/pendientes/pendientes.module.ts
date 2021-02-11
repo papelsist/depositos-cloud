@@ -9,6 +9,7 @@ import { PendientesPageRoutingModule } from './pendientes-routing.module';
 import { PendientesPage } from './pendientes.page';
 import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
 import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.component';
+import { PendientesCardsViewComponent } from './card-view/pendientes-cards-view.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,10 @@ import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.compo
     PendientesPageRoutingModule,
     SharedUiSolicitudesModule,
   ],
-  declarations: [PendientesPage, AutorizarModalComponent],
+  declarations: [
+    PendientesPage,
+    AutorizarModalComponent,
+    PendientesCardsViewComponent,
+  ],
 })
 export class PendientesPageModule {}

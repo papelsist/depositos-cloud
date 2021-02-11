@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 
 import { throwIfAlreadyLoaded } from '../utils/angular';
-import { AngularFireAuthModule } from '@angular/fire/auth';
+
 const routes: Routes = [
   {
     path: 'signup',
@@ -14,7 +14,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [],
-  imports: [CommonModule, RouterModule.forChild(routes), AngularFireAuthModule],
+  imports: [CommonModule, RouterModule.forChild(routes)],
 })
 export class AuthModule {
   constructor(@Optional() @SkipSelf() parentModule?: AuthModule) {

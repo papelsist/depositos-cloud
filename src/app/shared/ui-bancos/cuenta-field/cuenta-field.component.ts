@@ -21,11 +21,13 @@ import { CuentaDeBanco } from '@papx/models';
         interface="popover"
         [interfaceOptions]="customPopoverOptions"
         (ionChange)="onSelect($event)"
+        [value]="value"
       >
         <ion-select-option *ngFor="let cuenta of cuentas" [value]="cuenta">
           {{ cuenta.descripcion }} ({{ cuenta.numero }})
         </ion-select-option>
       </ion-select>
+      <ion-icon slot="start" name="folder"></ion-icon>
     </ion-item>
   `,
   styles: [

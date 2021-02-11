@@ -1,4 +1,4 @@
-import { Autorizacion } from './autorizacion';
+import { Autorizacion, AutorizacionRechazo } from './autorizacion';
 import { Banco } from './banco';
 import { Cliente } from './cliente';
 import { CuentaDeBanco } from './cuenta-de-banco';
@@ -25,7 +25,14 @@ export interface SolicitudDeDeposito {
   dateCreated?: string;
   lastUpdated?: string;
   createUser: Partial<User>;
-  updateUser?: string;
+  updateUser: Partial<User>;
   autorizacion?: Autorizacion;
+  rechazo?: AutorizacionRechazo;
+  rechasosAnteriores?: AutorizacionRechazo[];
   status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO';
+}
+
+export interface UpdateSolicitud {
+  id: string;
+  changes: Partial<SolicitudDeDeposito>;
 }

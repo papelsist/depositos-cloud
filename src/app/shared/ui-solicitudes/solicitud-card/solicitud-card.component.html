@@ -10,6 +10,9 @@
   </ion-card-header>
   <ion-card-content>
     <ion-list>
+      <ion-item>
+        <ion-label> Folio: {{ solicitud.folio }} </ion-label>
+      </ion-item>
       <ion-item *ngIf="solicitud.transferencia > 0.0">
         <ion-label position="floating">Transferencia:</ion-label>
         <ion-input
@@ -106,5 +109,6 @@
         <ion-icon slot="start" name="storefront"></ion-icon>
       </ion-item>
     </ion-list>
+    <ng-content></ng-content>
   </ion-card-content>
 </ion-card>

@@ -24,6 +24,14 @@ const routes: Routes = [
       },
 
       {
+        path: 'autorizadas',
+        loadChildren: () =>
+          import('../autorizadas/autorizadas.module').then(
+            (m) => m.AutorizadasPageModule
+          ),
+      },
+
+      {
         path: '',
         redirectTo: '/solicitudes/pendientes',
         pathMatch: 'full',
@@ -35,6 +43,13 @@ const routes: Routes = [
     loadChildren: () =>
       import('../create-solicitud/create-solicitud.module').then(
         (m) => m.CreateSolicitudPageModule
+      ),
+  },
+  {
+    path: 'rechazadas/:solicitudId',
+    loadChildren: () =>
+      import('../edit-solicitud/edit-solicitud.module').then(
+        (m) => m.EditSolicitudPageModule
       ),
   },
 ];

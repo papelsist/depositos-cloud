@@ -48,6 +48,10 @@ const routes: Routes = [
       import('./@auth/pending/pending.module').then((m) => m.PendingPageModule),
     // ...canActivate(redirectUnauthorized),
   },
+  {
+    path: 'edit-solicitud',
+    loadChildren: () => import('./solicitudes/edit-solicitud/edit-solicitud.module').then( m => m.EditSolicitudPageModule)
+  },
 ];
 
 @NgModule({

@@ -21,11 +21,13 @@ import { Banco } from '@papx/models';
         interface="popover"
         [interfaceOptions]="customPopoverOptions"
         (ionChange)="onSelection($event)"
+        [value]="value"
       >
         <ion-select-option *ngFor="let banco of bancos" [value]="banco">
           {{ banco.nombre }}
         </ion-select-option>
       </ion-select>
+      <ion-icon size="small" slot="start" name="business"></ion-icon>
     </ion-item>
   `,
   styles: [
@@ -56,7 +58,6 @@ export class BancoFieldComponent implements OnInit, ControlValueAccessor {
 
   customPopoverOptions: any = {
     header: 'Catálogo de bancos',
-    message: 'Seleccione el banco',
     cssClass: 'banco-field-popup',
   };
 
