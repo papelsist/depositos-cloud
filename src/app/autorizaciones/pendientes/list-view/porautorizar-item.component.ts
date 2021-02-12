@@ -95,16 +95,6 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
           </ion-row>
         </ion-grid>
       </ion-label>
-      <!-- <ion-icon
-        slot="start"
-        name="warning"
-        size="small"
-        [color]="retrasoColor"
-        class="ion-hide-md-down"
-      ></ion-icon> -->
-      <!-- <ion-avatar slot="start">
-        {{ sol.folio }}
-      </ion-avatar> -->
       <ion-note slot="start" color="primary">
         {{ sol.folio }}
       </ion-note>
