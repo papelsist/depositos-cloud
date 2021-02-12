@@ -18,13 +18,6 @@ export const getSucursales = functions.https.onRequest(async (req, res) => {
   res.send(rows);
 });
 
-export const createSolicitudDeDeposito = functions.https.onCall(
-  (data, context) => {
-    functions.logger.log('Registrando solicitud de deposito');
-    return { comentario: 'OK' };
-  }
-);
-
 export const onCreateUser = functions.auth.user().onCreate(async (user) => {
   functions.logger.info('User created: ' + user.displayName);
 
@@ -73,6 +66,7 @@ const createSiipapUser = functions.https.onCall(async (data, context) => {
       });
     }
     const uid = snapshot.docs[0].id;
+    const { telefono } = snapshot.docs[0].data();
 
     const user = await admin.auth().createUser({
       email,
@@ -81,6 +75,7 @@ const createSiipapUser = functions.https.onCall(async (data, context) => {
       displayName,
       disabled: false,
       uid,
+      phoneNumber: telefono ?? null,
     });
 
     return user;

@@ -2,7 +2,7 @@
   <ion-menu side="start" menuId="first" contentId="main" #menu>
     <ion-header>
       <ion-toolbar color="primary" translucent>
-        <ion-title>Start Menu</ion-title>
+        <ion-title>Operaciones</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -17,14 +17,14 @@
         </ion-item>
         <ion-item detail routerLink="/autorizaciones" (click)="menu.toggle()">
           <ion-label>Autorizaciones</ion-label>
-          <ion-icon slot="start" name="speedometer"></ion-icon>
-        </ion-item>
-        <ion-item detail routerLink="/tableros" (click)="menu.toggle()">
-          Tableros
           <ion-icon slot="start" name="shield-checkmark"></ion-icon>
         </ion-item>
-        <ion-item detail routerLink="/ajustes" (click)="menu.toggle()">
-          <ion-label>Ajustes</ion-label>
+        <ion-item detail routerLink="/tableros" (click)="menu.toggle()">
+          <ion-label>Tableros</ion-label>
+          <ion-icon slot="start" name="speedometer"></ion-icon>
+        </ion-item>
+        <ion-item detail routerLink="/settings" (click)="menu.toggle()">
+          <ion-label>Mi cuenta</ion-label>
           <ion-icon slot="start" name="settings"></ion-icon>
         </ion-item>
         <ion-item (click)="signOut()" button>

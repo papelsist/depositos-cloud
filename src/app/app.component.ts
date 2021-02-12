@@ -5,8 +5,6 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './@auth/auth.service';
 import { Router } from '@angular/router';
-import { users } from 'functions/src/catalogos/data';
-import { AngularFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +17,6 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private authService: AuthService,
-    private afs: AngularFirestore,
     private router: Router
   ) {
     this.initializeApp();
@@ -33,11 +30,22 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe((user) =>
-      console.log('Curren user:', user?.displayName)
-    );
+    this.logSecurityState();
+  }
 
-    this.authService.userInfo$.subscribe((res) => console.log('INFO: ', res));
+  /**
+   * Temporal para verificar datos de Firebase auth
+   */
+  private logSecurityState() {
+    this.authService.currentUser$.subscribe((user) =>
+      console.log(`User:${user?.displayName} Verified: ${user?.emailVerified}`)
+    );
+    this.authService.userInfo$.subscribe((res) =>
+      console.log('Profile: ', res)
+    );
+    this.authService.claims$.subscribe((claims) =>
+      console.log('Claims: ', claims)
+    );
   }
 
   async signOut() {

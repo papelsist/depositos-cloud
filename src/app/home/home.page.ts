@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { AuthService } from '../@auth/auth.service';
 
 @Component({
@@ -8,6 +9,7 @@ import { AuthService } from '../@auth/auth.service';
 })
 export class HomePage implements OnInit {
   user$ = this.authService.currentUser$;
+  verified$ = this.user$.pipe(map((user) => user.emailVerified));
   constructor(private authService: AuthService) {}
 
   ngOnInit() {}

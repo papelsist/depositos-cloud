@@ -12,6 +12,8 @@ import { AutorizacionPanelComponent } from './autorizacion-panel/autorizacion-pa
 import { SolicitudDetailComponent } from './solicitud-detail/solicitud-detail.component';
 import { SolicitudDetailModalComponent } from './solicitud-detail-modal/solicitud-detail-modal.component';
 import { RechazoInfoComponent } from './rechazo-info/rechazo-info.component';
+import { SolicitudesListViewComponent } from './list-view/solicitudes-list-view.component';
+import { SolicitudListItemComponent } from './list-view/solicitud-list-item.component';
 
 @NgModule({
   imports: [
@@ -29,6 +31,8 @@ import { RechazoInfoComponent } from './rechazo-info/rechazo-info.component';
     SolicitudPanelComponent,
     SolicitudDetailComponent,
     SolicitudDetailModalComponent,
+    SolicitudesListViewComponent,
+    SolicitudListItemComponent,
     RechazoInfoComponent,
   ],
   exports: [
@@ -38,6 +42,8 @@ import { RechazoInfoComponent } from './rechazo-info/rechazo-info.component';
     AutorizacionPanelComponent,
     SolicitudDetailComponent,
     SolicitudDetailModalComponent,
+    SolicitudesListViewComponent,
+    SolicitudListItemComponent,
     RechazoInfoComponent,
   ],
 })

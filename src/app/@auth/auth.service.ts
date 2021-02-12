@@ -1,19 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import firebase from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireFunctions } from '@angular/fire/functions';
 
-import { throwError, from, of, Observable } from 'rxjs';
-import {
-  catchError,
-  filter,
-  map,
-  shareReplay,
-  switchMap,
-  tap,
-} from 'rxjs/operators';
+import { throwError, of, Observable } from 'rxjs';
+import { catchError, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { User, UserInfo } from '../@models/user';
 import { mapUser } from './utils';
@@ -23,14 +15,19 @@ import { AngularFirestore } from '@angular/fire/firestore';
 export class AuthService {
   // readonly currentUser$ = this.auth.user;
   readonly hostUrl = 'http://localhost:8100/';
+
   readonly currentUser$ = this.auth.user.pipe(
-    map((user) => (user ? mapUser(user) : null))
-    // shareReplay()
+    map((user) => (user ? mapUser(user) : null)),
+    shareReplay()
+  );
+
+  readonly claims$ = this.auth.idTokenResult.pipe(
+    map((res) => (res ? res.claims : {}))
   );
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => {
-      return user ? this.getUserByUid(user.uid) : of(null);
+      return user ? this.getUserByEmail(user.email) : of(null);
     }),
     catchError((err) => throwError(err))
   );
@@ -118,6 +115,18 @@ export class AuthService {
     return this.firestore
       .collection<UserInfo>('users', (ref) => {
         return ref.where('uid', '==', uid).limit(1);
+      })
+      .valueChanges()
+      .pipe(
+        map((users) => (users.length > 0 ? users[0] : null)),
+        catchError((err) => throwError(err))
+      );
+  }
+
+  getUserByEmail(email: string): Observable<UserInfo | null> {
+    return this.firestore
+      .collection<UserInfo>('users', (ref) => {
+        return ref.where('email', '==', email).limit(1);
       })
       .valueChanges()
       .pipe(

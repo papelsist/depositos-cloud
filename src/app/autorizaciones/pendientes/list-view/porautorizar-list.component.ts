@@ -15,6 +15,7 @@ import { SolicitudDeDeposito } from '@papx/models';
       <ion-col size="12" size-xl="10" offset-xl="1">
         <ion-list class="ion-no-padding" lines="full">
           <papx-solicitud-list-item
+            [delegateDrilldown]="delegateDrilldown"
             [sol]="sol"
             *ngFor="let sol of solicitudes"
             (selection)="selection.emit(sol)"
@@ -29,6 +30,7 @@ import { SolicitudDeDeposito } from '@papx/models';
 export class SolicitudesListViewComponent implements OnInit {
   @Input() solicitudes: SolicitudDeDeposito[];
   @Output() selection = new EventEmitter();
+  @Input() delegateDrilldown = false;
   constructor() {}
 
   ngOnInit() {}

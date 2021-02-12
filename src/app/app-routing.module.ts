@@ -8,7 +8,75 @@ import {
   redirectUnauthorized,
 } from '@papx/auth';
 
-import { canActivate } from '@angular/fire/auth-guard';
+import {
+  canActivate,
+  hasCustomClaim,
+  emailVerified,
+} from '@angular/fire/auth-guard';
+import { IntroductionGuard } from './intro/intro.guard';
+
+const autorizaDepositos = () => hasCustomClaim('autorizarDepositos');
+const registrarDepositos = () => hasCustomClaim('REGISTRAR_DEPOSITOS');
+
+const routes2: Routes = [
+  {
+    path: '',
+    ...canActivate(redirectUnauthorized),
+    children: [
+      {
+        path: 'home',
+        loadChildren: () =>
+          import('./home/home.module').then((m) => m.HomePageModule),
+        ...canActivate(redirectUnverifiedToPending),
+      },
+      // {
+      //   path: 'intro',
+      //   loadChildren: () =>
+      //     import('./intro/intro.module').then((m) => m.IntroPageModule),
+      //   canActivate: [IntroductionGuard],
+      // },
+      {
+        path: 'solicitudes',
+        loadChildren: () =>
+          import('./solicitudes/solicitudes-tab/solicitudes-tab.module').then(
+            (m) => m.SolicitudesTabPageModule
+          ),
+        ...canActivate(registrarDepositos),
+      },
+      {
+        path: 'autorizaciones',
+        loadChildren: () =>
+          import(
+            './autorizaciones/autotirzaciones-tab/autotirzaciones-tab.module'
+          ).then((m) => m.AutotirzacionesTabPageModule),
+        ...canActivate(autorizaDepositos),
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('./settings/settings.module').then(
+            (m) => m.SettingsPageModule
+          ),
+      },
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full',
+      },
+    ],
+  },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./@auth/login/login.module').then((m) => m.LoginPageModule),
+    // ...canActivate(redirectLoggedInToHome),
+  },
+  {
+    path: '',
+    redirectTo: '/home',
+    pathMatch: 'full',
+  },
+];
 
 const routes: Routes = [
   {
@@ -16,11 +84,6 @@ const routes: Routes = [
     loadChildren: () =>
       import('./home/home.module').then((m) => m.HomePageModule),
     // ...canActivate(redirectUnverifiedToPending),
-  },
-  {
-    path: '',
-    redirectTo: 'home',
-    pathMatch: 'full',
   },
   {
     path: 'solicitudes',
@@ -49,14 +112,15 @@ const routes: Routes = [
     // ...canActivate(redirectUnauthorized),
   },
   {
-    path: 'edit-solicitud',
-    loadChildren: () => import('./solicitudes/edit-solicitud/edit-solicitud.module').then( m => m.EditSolicitudPageModule)
+    path: '',
+    redirectTo: 'home',
+    pathMatch: 'full',
   },
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, {
+    RouterModule.forRoot(routes2, {
       preloadingStrategy: PreloadAllModules,
       relativeLinkResolution: 'legacy',
     }),

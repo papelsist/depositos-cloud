@@ -1,53 +1,51 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title> Depósitos APP </ion-title>
-    <ion-buttons slot="end">
-      <ion-button>
-        <ion-icon name="settings"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<ng-container *ngIf="user$ | async as user">
+  <ion-header [translucent]="true">
     <ion-toolbar>
-      <ion-title>Depósitos APP</ion-title>
+      <ion-buttons slot="start" *ngIf="user.emailVerified">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title> Depósitos APP </ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <div id="container">
-    <ion-grid class="ion-padding">
+  <ion-content>
+    <ion-grid>
       <ion-row>
-        <ion-col size size-sm="12" size-md="8" offset-md="2">
-          <ion-list>
-            <ion-list-header class="ion-text-center">
-              <ion-label>Operaciones</ion-label>
-            </ion-list-header>
-            <ion-item detail routerLink="/solicitudes">
-              <ion-label> Solicitudes </ion-label>
-            </ion-item>
-            <ion-item detail routerLink="/autorizaciones">
-              <ion-label> Autorizaciones </ion-label>
-            </ion-item>
-            <ion-item detail routerLink="/login">
-              <ion-label> Login page</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col *ngIf="user$ | async as user">
-          <pre>
-            Usuario: {{user.displayName}} <br>
-            Display name: {{user.email}} <br>
-            Email verified: {{user.emailVerified}}
-          </pre>
+        <ion-col
+          size-sm="12"
+          size-md="8"
+          offset-md="2"
+          size-lg="6"
+          offset-lg="3"
+        >
+          <div class="container">
+            <papx-welcome
+              [displayName]="user.displayName"
+              [lastAccess]="user.lastSignInTime"
+            ></papx-welcome>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>
-  </div>
-</ion-content>
+  </ion-content>
+  <!-- <ng-template #pending>
+    <div class="pending-container">
+      <h1>Validación de cuenta pendiente!</h1>
+      <p class="ion-text-wrap">
+        <ion-text color="primary"> {{user.displayName}} </ion-text>. Tu cuenta
+        ha sido creada exitosamente, por razones de seguridad es necesrio que
+        confirmes tu identidad mediante el correo electrónico que te fué
+        enviado. Una vez que valides tu registro podras accesar al sistema si no
+        recibiste el correo o bien este ya caducó puedes solicitarlo nuevamente
+      </p>
+
+      <ion-button
+        fill="clear"
+        (click)="user.firebaseUser.sendEmailVerification()"
+      >
+        <ion-label> Reenviar correo de confirmación </ion-label>
+        <ion-icon name="send" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </ng-template> -->
+</ng-container>

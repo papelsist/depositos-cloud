@@ -10,6 +10,11 @@ const routes: Routes = [
     loadChildren: () =>
       import('./sign-up/sign-up.module').then((m) => m.SignUpPageModule),
   },
+  {
+    path: 'pending',
+    loadChildren: () =>
+      import('./pending/pending.module').then((m) => m.PendingPageModule),
+  },
 ];
 
 @NgModule({

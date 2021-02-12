@@ -1,1 +1,2 @@
-export * from "./angular";
+export * from './angular';
+export * from './slide-options';

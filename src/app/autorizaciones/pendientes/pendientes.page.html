@@ -14,30 +14,21 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+<ion-content class="ion-no-padding" *ngIf="pendientes$ | async as solicituds">
+  <div *ngIf="session$ | async as userInfo">
+    <papx-pendientes-cards-view
+      *ngIf="config.view === 'cards'"
+      [solicitudes]="pendientes$ | async"
+      (autorizar)="onAutorizar($event, userInfo)"
+      (rechazar)="onRechazar($event, userInfo)"
+    ></papx-pendientes-cards-view>
 
-<ion-content class="ion-no-padding" *ngIf="session$ | async as userInfo">
-  <papx-pendientes-cards-view
-    *ngIf="config.view === 'cards'"
-    [solicitudes]="pendientes$ | async"
-    (autorizar)="onAutorizar($event, userInfo)"
-    (rechazar)="onRechazar($event, userInfo)"
-  ></papx-pendientes-cards-view>
+    <papx-solicitudes-list-view
+      delegateDrilldown="true"
+      [solicitudes]="solicituds"
+      (selection)="onAutorizar($event, userInfo)"
+      *ngIf="config.view === 'list'"
+    >
+    </papx-solicitudes-list-view>
+  </div>
 </ion-content>
-
-<!-- <ion-grid>
-    <ion-row>
-      <ion-col
-        size="12"
-        size-sm="6"
-        size-md="4"
-        *ngFor="let sol of pendientes$ | async, index as idx"
-      >
-        <papx-autorizacion-card
-          [solicitud]="sol"
-          (autorizar)="onAutorizar($event)"
-          (rechazar)="onRechazar($event)"
-        >
-        </papx-autorizacion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid> -->

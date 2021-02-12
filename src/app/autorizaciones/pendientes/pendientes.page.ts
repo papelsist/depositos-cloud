@@ -180,4 +180,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
     });
     loading.present();
   }
+  onSelection(sol: SolicitudDeDeposito) {
+    console.log('Detail of: ', sol);
+  }
 }
