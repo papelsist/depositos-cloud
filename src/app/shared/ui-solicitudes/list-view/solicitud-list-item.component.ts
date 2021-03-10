@@ -38,9 +38,7 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
               size-lg="2"
             >
               <ion-text [color]="importeColor">
-                <h2>
-                  {{ sol.total | currency }}
-                </h2>
+                <h2>{{ sol.total | currency }}</h2>
               </ion-text>
             </ion-col>
 
@@ -195,6 +193,7 @@ export class SolicitudListItemComponent implements OnInit {
       this.selection.emit(solicitud);
       return;
     }
+    /*
     const modal = await this.modalController.create({
       component: SolicitudDetailModalComponent,
       cssClass: 'solicitud-detail-modal',
@@ -204,5 +203,6 @@ export class SolicitudListItemComponent implements OnInit {
       },
     });
     return await modal.present();
+    */
   }
 }

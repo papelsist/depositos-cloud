@@ -30,6 +30,8 @@ import { SolicitudDeDeposito } from '@papx/models';
 export class SolicitudesListViewComponent implements OnInit {
   @Input() solicitudes: SolicitudDeDeposito[];
   @Output() selection = new EventEmitter();
+  @Output() autorizar = new EventEmitter();
+  @Output() rechazar = new EventEmitter();
   @Input() delegateDrilldown = false;
   constructor() {}
 

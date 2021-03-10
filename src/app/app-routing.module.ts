@@ -27,7 +27,8 @@ const routes2: Routes = [
         path: 'home',
         loadChildren: () =>
           import('./home/home.module').then((m) => m.HomePageModule),
-        ...canActivate(redirectUnverifiedToPending),
+        // ...canActivate(redirectUnverifiedToPending),
+        ...canActivate(redirectUnauthorized),
       },
       // {
       //   path: 'intro',
@@ -41,7 +42,8 @@ const routes2: Routes = [
           import('./solicitudes/solicitudes-tab/solicitudes-tab.module').then(
             (m) => m.SolicitudesTabPageModule
           ),
-        ...canActivate(registrarDepositos),
+        // ...canActivate(registrarDepositos),
+        ...canActivate(redirectUnauthorized),
       },
       {
         path: 'autorizaciones',
@@ -49,7 +51,8 @@ const routes2: Routes = [
           import(
             './autorizaciones/autotirzaciones-tab/autotirzaciones-tab.module'
           ).then((m) => m.AutotirzacionesTabPageModule),
-        ...canActivate(autorizaDepositos),
+        // ...canActivate(autorizaDepositos),
+        ...canActivate(redirectUnauthorized),
       },
       {
         path: 'settings',
@@ -57,6 +60,7 @@ const routes2: Routes = [
           import('./settings/settings.module').then(
             (m) => m.SettingsPageModule
           ),
+        ...canActivate(redirectUnauthorized),
       },
       {
         path: '',

@@ -14,8 +14,8 @@ import { SolicitudDeDeposito } from '@papx/models';
     <ion-row>
       <ion-col
         size="12"
-        size-sm="6"
-        size-md="4"
+        size-md="6"
+        size-lg="4"
         *ngFor="let solicitud of solicitudes"
       >
         <papx-solicitud-card [solicitud]="solicitud">

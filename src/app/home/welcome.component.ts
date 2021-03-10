@@ -23,8 +23,8 @@ import {
             <ion-text color="primary">
               {{ displayName }}
             </ion-text>
-            al sistema de registro y autorización de solicitudes de depósitos/
-            transferencias bancarias.
+            al sistema de registro y autorización de solicitudes de depósitos
+            <span> (transferencias bancarias) </span>
           </h2>
         </ion-text>
       </ion-card-content>

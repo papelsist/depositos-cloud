@@ -1,14 +1,15 @@
 {
+  "projects": {
+    "depositos": "papx-ws-dev",
+    "default": "papx-ws-dev"
+  },
   "targets": {
-    "depositos-sx": {
+    "papx-ws-dev": {
       "hosting": {
         "app": [
-          "depositos-sx"
+          "papel-depositos"
         ]
       }
     }
-  },
-  "projects": {
-    "default": "depositos-sx"
   }
 }

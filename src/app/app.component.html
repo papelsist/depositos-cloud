@@ -1,10 +1,11 @@
 <ion-app>
   <ion-menu side="start" menuId="first" contentId="main" #menu>
-    <ion-header>
+    <ion-header *ngIf="user$ | async as user">
       <ion-toolbar color="primary" translucent>
-        <ion-title>Operaciones</ion-title>
+        <ion-title>{{ user.displayName }}</ion-title>
       </ion-toolbar>
     </ion-header>
+
     <ion-content>
       <ion-list lines="none" class="ion-no-padding" (click)="menu.toggle()">
         <ion-item detail routerLink="/">

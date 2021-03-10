@@ -25,7 +25,7 @@ import {
 } from '@angular/fire/functions';
 
 import { environment } from '../../environments/environment';
-
+/*
 export function initializeApp1(afa: AngularFireAuth): any {
   return () => {
     return new Promise((resolve: any) => {
@@ -34,7 +34,7 @@ export function initializeApp1(afa: AngularFireAuth): any {
     });
   };
 }
-
+*/
 @NgModule({
   declarations: [],
   imports: [
@@ -62,13 +62,14 @@ export function initializeApp1(afa: AngularFireAuth): any {
       provide: FUNCTIONS_ORIGIN,
       useFactory: () => (isDevMode() ? undefined : location.origin),
     },
-    /* Delay the app initialization process by 100ms*/
+    /* Delay the app initialization process by 100ms
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp1,
       deps: [AngularFireAuth],
       multi: true,
     },
+    */
   ],
 })
 export class DataAccessModule {

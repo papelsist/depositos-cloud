@@ -26,7 +26,9 @@
     <papx-solicitudes-list-view
       delegateDrilldown="true"
       [solicitudes]="solicituds"
-      (selection)="onAutorizar($event, userInfo)"
+      (autorizar)="onAutorizar($event, userInfo)"
+      (rechazar)="onRechazar($event, userInfo)"
+      (selection)="onSelection($event, userInfo)"
       *ngIf="config.view === 'list'"
     >
     </papx-solicitudes-list-view>

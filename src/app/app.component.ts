@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
+  user$ = this.authService.currentUser$;
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -30,7 +31,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.logSecurityState();
+    // this.logSecurityState();
+    // this.user$.subscribe((user) => console.log('USER: ', user));
   }
 
   /**

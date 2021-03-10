@@ -125,7 +125,7 @@ export class AuthService {
 
   getUserByEmail(email: string): Observable<UserInfo | null> {
     return this.firestore
-      .collection<UserInfo>('users', (ref) => {
+      .collection<UserInfo>('usuarios', (ref) => {
         return ref.where('email', '==', email).limit(1);
       })
       .valueChanges()

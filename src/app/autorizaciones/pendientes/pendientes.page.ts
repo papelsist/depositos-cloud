@@ -14,6 +14,8 @@ import {
 } from '@ionic/angular';
 import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.component';
 import { AuthService } from '@papx/auth';
+import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solicitud-detail-modal/solicitud-detail-modal.component';
+import { SolicitudPendienteModalComponent } from './pendiente-modal/pendiente-modal.component';
 
 @Component({
   selector: 'app-pendientes',
@@ -73,6 +75,26 @@ export class PendientesPage extends BaseComponent implements OnInit {
    */
   ionViewDidLeave() {
     this._pauseResume$.next(false);
+  }
+
+  async onSelection(solicitud: Partial<SolicitudDeDeposito>, user: UserInfo) {
+    const modal = await this.modal.create({
+      component: SolicitudPendienteModalComponent,
+      cssClass: 'solicitud-pendiente-modal',
+      mode: 'ios',
+      componentProps: {
+        solicitud,
+      },
+    });
+    await modal.present();
+    const { data } = await modal.onWillDismiss();
+    if (data) {
+      console.log('Data: ', data);
+      if (data.resultado === 'autorizar')
+        return this.onAutorizar(solicitud, user);
+      if (data.resultado === 'rechazar')
+        return this.onRechazar(solicitud, user);
+    }
   }
 
   async onAutorizar(solicitud: Partial<SolicitudDeDeposito>, user: UserInfo) {
@@ -179,8 +201,5 @@ export class PendientesPage extends BaseComponent implements OnInit {
       message: 'Registrando rechazo',
     });
     loading.present();
-  }
-  onSelection(sol: SolicitudDeDeposito) {
-    console.log('Detail of: ', sol);
   }
 }

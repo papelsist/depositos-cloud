@@ -63,17 +63,16 @@ export class SignUpPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    const val = {
-      email: 'luxsoft.cancino@gmail.com',
-      displayName: 'Ruben Cancino',
-      password: 'dodgers6',
-    };
-    this.form.patchValue(val);
-
+    // const val = {
+    //   email: 'luxsoft.cancino@gmail.com',
+    //   displayName: 'Ruben Cancino',
+    //   password: 'dodgers6',
+    // };
+    // this.form.patchValue(val);
     // DEBUG
-    this.authService.currentUser$.subscribe((user) =>
-      console.log('Current user: ', user)
-    );
+    // this.authService.currentUser$.subscribe((user) =>
+    //   console.log('Current user: ', user)
+    // );
   }
 
   get confirm() {
