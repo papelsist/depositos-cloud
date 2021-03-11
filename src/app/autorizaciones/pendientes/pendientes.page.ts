@@ -4,18 +4,25 @@ import { BehaviorSubject, Observable, timer } from 'rxjs';
 import { filter, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { SolicitudesService } from '@papx/data-access';
-import { Autorizacion, SolicitudDeDeposito, UserInfo } from '@papx/models';
+import {
+  Autorizacion,
+  AutorizacionRechazo,
+  SolicitudDeDeposito,
+  UserInfo,
+} from '@papx/models';
 import { BaseComponent } from 'src/app/core';
 import { SolicitudCardComponent } from '@papx/shared/ui-solicitudes/solicitud-card/solicitud-card.component';
 import {
   AlertController,
   LoadingController,
   ModalController,
+  PopoverController,
 } from '@ionic/angular';
 import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.component';
 import { AuthService } from '@papx/auth';
 import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solicitud-detail-modal/solicitud-detail-modal.component';
 import { SolicitudPendienteModalComponent } from './pendiente-modal/pendiente-modal.component';
+import { RechazarModalComponent } from './rechazar-modal/rechazar-modal.component';
 
 @Component({
   selector: 'app-pendientes',
@@ -43,7 +50,8 @@ export class PendientesPage extends BaseComponent implements OnInit {
     private auth: AuthService,
     private modal: ModalController,
     private alertController: AlertController,
-    private loading: LoadingController
+    private loading: LoadingController,
+    private popover: PopoverController
   ) {
     super();
   }
@@ -89,7 +97,6 @@ export class PendientesPage extends BaseComponent implements OnInit {
     await modal.present();
     const { data } = await modal.onWillDismiss();
     if (data) {
-      console.log('Data: ', data);
       if (data.resultado === 'autorizar')
         return this.onAutorizar(solicitud, user);
       if (data.resultado === 'rechazar')
@@ -102,9 +109,10 @@ export class PendientesPage extends BaseComponent implements OnInit {
     const duplicados = await this.service.buscarDuplicado(solicitud);
     const posibleDuplicado = duplicados.length > 0 ? duplicados[0] : null;
     // console.log('Posible duplicado: ', posibleDuplicado);
-    const modal = await this.modal.create({
+    const modal = await this.popover.create({
       component: AutorizarModalComponent,
       componentProps: { solicitud, posibleDuplicado },
+      cssClass: 'solicitud-autorizar-popover',
     });
     await modal.present();
     const { data } = await modal.onDidDismiss();
@@ -128,56 +136,31 @@ export class PendientesPage extends BaseComponent implements OnInit {
   }
 
   async onRechazar(solicitud: Partial<SolicitudDeDeposito>, user: UserInfo) {
-    let resul = null;
-    const alert = await this.alertController.create({
-      header: 'Solicitud rechazada',
-      inputs: [
-        {
-          name: 'motivo',
-          type: 'text',
-          label: 'Motivo',
-          placeholder: 'Motivo',
-          value: 'ERRORES EN CAPTURA',
-          tabindex: 9,
-        },
-        {
-          name: 'comentario',
-          label: 'Comentario',
-          type: 'textarea',
-          placeholder: 'Comentario',
-          value: 'CHECAR DATOS',
-          tabindex: 10,
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Rechazar',
-          handler: (value) => {
-            resul = value;
-          },
-        },
-      ],
+    const pop = await this.popover.create({
+      component: RechazarModalComponent,
+      componentProps: { solicitud },
+      cssClass: 'solicitud-rechazo-popover',
+      animated: true,
+      mode: 'md',
+      showBackdrop: false,
+      translucent: false,
     });
-    await alert.present();
-    await alert.onDidDismiss();
-    if (resul) {
+    await pop.present();
+    const { data } = await pop.onWillDismiss();
+    if (data) {
       try {
-        this.startLoading();
-        const payload = {
-          ...resul,
-          user: { uid: user.uid, displayName: user.displayName },
+        await this.startLoading('Registrando rechazo');
+        const payload: AutorizacionRechazo = {
+          motivo: data.motivo,
+          uid: user.uid,
+          userName: user.displayName,
         };
         await this.service.rechazar(solicitud.id, payload);
-        console.log('Rechazo exitosamente salvado...');
       } catch (err) {
         console.error('ERROR RECHAZANDO SOLICITUD: ', err);
+        this.handleError('Error registrando rechazo: ' + err.message);
       } finally {
-        this.loading.dismiss();
+        await this.loading.dismiss();
       }
     }
   }
@@ -191,15 +174,32 @@ export class PendientesPage extends BaseComponent implements OnInit {
     const sjson = JSON.stringify(this.config);
     localStorage.setItem(this.STORAGE_KEY, sjson);
   }
+
   changeView(view: 'list' | 'cards') {
     this.config = { ...this.config, view };
     this.saveConfig();
   }
 
-  async startLoading() {
+  async startLoading(message = 'Procesando') {
     const loading = await this.loading.create({
-      message: 'Registrando rechazo',
+      message,
     });
     loading.present();
+  }
+
+  async handleError(err) {
+    const a = await this.alertController.create({
+      header: 'Error en Firebase',
+      message: err,
+      mode: 'ios',
+      animated: true,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+        },
+      ],
+    });
+    await a.present();
   }
 }

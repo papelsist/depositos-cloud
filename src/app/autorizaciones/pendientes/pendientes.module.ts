@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
@@ -10,11 +10,13 @@ import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
 import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.component';
 import { PendientesCardsViewComponent } from './card-view/pendientes-cards-view.component';
 import { SolicitudPendienteModalComponent } from './pendiente-modal/pendiente-modal.component';
+import { RechazarModalComponent } from './rechazar-modal/rechazar-modal.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     RouterModule.forChild([
       {
@@ -29,6 +31,7 @@ import { SolicitudPendienteModalComponent } from './pendiente-modal/pendiente-mo
     AutorizarModalComponent,
     PendientesCardsViewComponent,
     SolicitudPendienteModalComponent,
+    RechazarModalComponent,
   ],
 })
 export class PendientesPageModule {}

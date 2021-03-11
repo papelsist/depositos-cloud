@@ -18,7 +18,7 @@
     [sucursal]="session.sucursal"
     [solcita]="session.nombre"
     (save)="onSave($event, session)"
-    (valueReady)="validarDuplicado($event)"
+    (valueReady)="validarDuplicado($event, session)"
   ></papx-solicitud-create-form>
 </ion-content>
 <ion-footer *ngIf="session$ | async as session">

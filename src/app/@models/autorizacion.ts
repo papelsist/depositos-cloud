@@ -14,9 +14,9 @@ export type TipoDeAutorizacion =
   | 'VENTA_SIN_EXISTENCIA';
 
 export interface AutorizacionRechazo {
-  user: Partial<UserInfo>;
-  fecha: string;
-  tipo: string;
+  uid: string;
+  userName: string;
+  tipo?: string;
   motivo: string;
   comentario?: string;
   dateCreated?: firebase.firestore.Timestamp;

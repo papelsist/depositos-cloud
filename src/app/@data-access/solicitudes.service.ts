@@ -15,9 +15,12 @@ import {
   UpdateSolicitud,
 } from '../@models/solicitud-de-deposito';
 import { Autorizacion, AutorizacionRechazo } from '../@models/autorizacion';
+import { User } from '@papx/models';
 
 @Injectable({ providedIn: 'root' })
 export class SolicitudesService {
+  readonly COLLECTION = 'solicitudes';
+
   pendientesPorAutorizar$ = this.afs
     .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
       ref.where('status', '==', 'PENDIENTE')
@@ -77,6 +80,53 @@ export class SolicitudesService {
       throw Error(`Error salvando solicitud en firebase`);
     }
     return sol;
+  }
+
+  async createSolicitud(solicitud: Partial<SolicitudDeDeposito>, user: User) {
+    try {
+      const payload = {
+        ...solicitud,
+        fecha: new Date().toISOString(),
+        uid: user.uid,
+        createUser: user.displayName,
+        dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+        appVersion: 2,
+      };
+
+      const folioRef = this.afs.doc('folios/solicitudes').ref;
+      let folio = 1;
+
+      const solicitudRef = this.afs.collection(this.COLLECTION).doc().ref;
+
+      // Stats Data
+      const statsRef = this.afs.collection(this.COLLECTION).doc('--stats--')
+        .ref;
+
+      return this.afs.firestore.runTransaction(async (transaction) => {
+        const folioDoc = await transaction.get<any>(folioRef);
+        const SUCURSAL = solicitud['sucursal'];
+        const folios = folioDoc.data() || {};
+        if (!folios[SUCURSAL]) {
+          folios[SUCURSAL] = 0;
+        }
+        folios[SUCURSAL] += 1;
+        folio = folios[SUCURSAL];
+        // console.log('Folios entity: ', folios);
+
+        transaction
+          .set(folioRef, folios, { merge: true })
+          .set(solicitudRef, { ...payload, folio })
+          .set(
+            statsRef,
+            { count: firebase.firestore.FieldValue.increment(1) },
+            { merge: true }
+          );
+        return folio;
+      });
+    } catch (error: any) {
+      console.error('Error salvando pedido: ', error);
+      throw new Error('Error salvando pedido: ' + error.message);
+    }
   }
 
   async update(command: UpdateSolicitud) {
@@ -153,26 +203,14 @@ export class SolicitudesService {
     console.log('Autorización exitosa');
   }
 
-  async rechazar(id: string, command: Partial<AutorizacionRechazo>) {
-    console.log('RECHAZO: ', command);
-    const rechazo = {
-      ...command,
-      tipo: 'TRANSACCION_BANCARIA',
-      solicitud: id,
-      fecha: new Date().toISOString(),
-    };
-
-    const callable = this.fns.httpsCallable('rechazarSolicitud');
-    return callable(rechazo)
-      .pipe(catchError((err) => throwError(err)))
-      .toPromise()
-      .catch((error) => Promise.reject(error));
-    // const doc = this.afs.doc(`solicitudes/${id}`);
-    // await doc.update({
-    //   rechazo,
-    //   status: 'RECHAZADO',
-    //   lastUpdated: firebase.firestore.Timestamp.now(),
-    // });
+  async rechazar(id: string, rechazo: Partial<AutorizacionRechazo>) {
+    rechazo.dateCreated = firebase.firestore.Timestamp.now();
+    const doc = this.afs.doc(`solicitudes/${id}`);
+    await doc.update({
+      rechazo,
+      status: 'RECHAZADO',
+      // lastUpdated: firebase.firestore.Timestamp.now(),
+    });
   }
 
   buscarDuplicado(sol: Partial<SolicitudDeDeposito>) {

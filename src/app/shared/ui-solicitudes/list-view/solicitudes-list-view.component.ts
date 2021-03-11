@@ -12,7 +12,7 @@ import { SolicitudDeDeposito } from '@papx/models';
   selector: 'papx-solicitudes-list-view',
   template: ` <ion-grid class="ion-no-padding">
     <ion-row>
-      <ion-col size="12" size-xl="10" offset-xl="1">
+      <ion-col size="12">
         <ion-list class="ion-no-padding" lines="full">
           <papx-solicitud-list-item
             [delegateDrilldown]="delegateDrilldown"

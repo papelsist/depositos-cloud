@@ -19,12 +19,13 @@ import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
           Rechazo: {{ rechazo.comentario }} / {{ rechazo.motivo }}
         </p>
         <p>
-          Por: {{ rechazo.user.displayName }}
+          Por: {{ rechazo.userName }}
           <span class="ion-padding-start">
-            {{ distanceFromNow(rechazo.fecha) }}
+            {{ distanceFromNow(rechazo.dateCreated.toDate()) }}
           </span>
           <span class="ion-padding-start">{{
-            rechazo.fecha | date: 'dd/MMM/yyyy HH:mm'
+            rechazo.dateCreated.toDate().toISOString()
+              | date: 'dd/MMM/yyyy HH:mm'
           }}</span>
         </p>
       </ion-label>

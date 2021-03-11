@@ -25,6 +25,7 @@ export class CreateSolicitudPage implements OnInit {
     cliente: new FormControl(null, [Validators.required]),
   });
   session$ = this.auth.userInfo$;
+  user$ = this.auth.currentUser$;
   constructor(
     private service: SolicitudesService,
     private auth: AuthService,
@@ -34,12 +35,13 @@ export class CreateSolicitudPage implements OnInit {
 
   ngOnInit() {}
 
-  async onSave(event: Partial<SolicitudDeDeposito>, session: UserInfo) {
-    // console.log('Salvar solicitud: ', event);
-    const { uid, displayName, email } = session;
-    event.createUser = { uid, displayName, email };
-    const sol = this.service.save(event);
-    this.router.navigate(['solicitudes']);
+  async onSave(sol: Partial<SolicitudDeDeposito>, user: User) {
+    try {
+      const fol = await this.service.createSolicitud(sol, user);
+      this.router.navigate(['solicitudes']);
+    } catch (error) {
+      this.handleError(error.message);
+    }
   }
 
   async validarDuplicado(sol: Partial<SolicitudDeDeposito>) {
@@ -62,5 +64,22 @@ export class CreateSolicitudPage implements OnInit {
 
   get carteraName() {
     return carteraDisplayName(this.cartera);
+  }
+
+  async handleError(message: string) {
+    const al = await this.alertController.create({
+      header: 'Error salvando datos',
+      subHeader: 'Firebase',
+      message,
+      mode: 'ios',
+      animated: true,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+        },
+      ],
+    });
+    await al.present();
   }
 }

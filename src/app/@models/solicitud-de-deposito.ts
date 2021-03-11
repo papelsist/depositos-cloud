@@ -9,7 +9,8 @@ import { User } from './user';
 export interface SolicitudDeDeposito {
   id: string;
   folio: number;
-  sucursal?: Partial<Sucursal>;
+  sucursal: string;
+  sucursalId: string;
   fecha: string;
   cliente: Partial<Cliente>;
   banco: Partial<Banco>;

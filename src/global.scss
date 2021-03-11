@@ -39,3 +39,17 @@
   --min-width: 70%;
   // --width
 }
+
+ion-popover.solicitud-rechazo-popover {
+  --width: 400px;
+  --max-width: 100%;
+  box-shadow: -8px 0 16px rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+}
+
+ion-popover.solicitud-autorizar-popover {
+  --width: 450px;
+  --max-width: 100%;
+  box-shadow: -8px 0 16px rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+}

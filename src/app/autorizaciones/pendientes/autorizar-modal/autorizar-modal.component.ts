@@ -4,7 +4,7 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, PopoverController } from '@ionic/angular';
 import {
   Autorizacion,
   AutorizacionRechazo,
@@ -15,28 +15,16 @@ import {
 @Component({
   selector: 'papx-autorizar-deposito-modal',
   template: `
-    <ion-header translucent>
-      <ion-toolbar>
-        <ion-title
-          >Autorizar
-          {{
-            solicitud.transferencia > 0.0 ? 'Transferencia' : 'Depósito'
-          }}</ion-title
-        >
-        <ion-buttons slot="end">
-          <ion-button (click)="dismissModal()">Cancelar</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content fullscreen class="ion-padding">
+    <div class="ion-padding">
+      <ion-list-header>
+        <ion-label>
+          Autorizar
+          {{ solicitud.transferencia > 0.0 ? 'Transferencia' : 'Depósito' }}:
+          {{ solicitud.folio }}
+        </ion-label>
+        <ion-button (click)="dismissModal()">Cancelar</ion-button>
+      </ion-list-header>
       <ion-list>
-        <ion-item>
-          <ion-label>
-            <h2>
-              Folio: <ion-text color="primary">{{ solicitud.folio }}</ion-text>
-            </h2>
-          </ion-label>
-        </ion-item>
         <ion-item>
           <ion-label>
             <h2>
@@ -45,18 +33,10 @@ import {
                 solicitud.total | currency
               }}</ion-text>
             </h2>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
             <h2>
               Banco origen:
               <ion-text color="primary">{{ solicitud.banco.nombre }}</ion-text>
             </h2>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
             <h2>
               Cuenta destino:
               <ion-text color="primary"
@@ -65,29 +45,12 @@ import {
                 }})
               </ion-text>
             </h2>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
             <h2>
               Fecha depósito:
               <ion-text color="primary">{{
                 solicitud.fechaDeposito | date: 'dd/MM/yyyy'
               }}</ion-text>
             </h2>
-          </ion-label>
-          <ion-label>
-            <h2>
-              Fecha creado:
-              <ion-text color="primary">{{
-                solicitud.fecha | date: 'dd/MM/yyyy'
-              }}</ion-text>
-            </h2>
-          </ion-label>
-        </ion-item>
-        <ion-item>
-          <ion-label>
-            <h2>{{ solicitud.cliente.nombre }}</h2>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -132,7 +95,7 @@ import {
         <ion-icon name="checkmark-done" slot="start"></ion-icon>
         <ion-label>Autorizar</ion-label>
       </ion-button>
-    </ion-content>
+    </div>
   `,
   styles: [``],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -140,7 +103,7 @@ import {
 export class AutorizarModalComponent implements OnInit {
   @Input() solicitud: Partial<SolicitudDeDeposito>;
   @Input() posibleDuplicado: Partial<SolicitudDeDeposito>;
-  constructor(private modal: ModalController) {}
+  constructor(private modal: PopoverController) {}
 
   ngOnInit() {
     console.log('Posible: ', this.posibleDuplicado);

@@ -1,18 +1,5 @@
-.solicitud-item {
+.row {
   display: grid;
   align-items: center;
-  grid-template-columns: repeat(auto-fit, mimax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  .flex {
-    flex: 1;
-  }
-}
-
-// .spacer {
-//   border: 2px dotted yellow;
-//   flex: 1;
-// }

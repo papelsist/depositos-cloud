@@ -21,13 +21,13 @@ import { SolicitudDeDeposito } from '@papx/models';
         <papx-solicitud-card [solicitud]="solicitud">
           <ion-toolbar>
             <ion-buttons slot="start">
-              <ion-button color="success" (click)="autorizar.emit(solicitud)">
-                <ion-label>Autorizar </ion-label>
-                <ion-icon name="checkmark-done" slot="start"></ion-icon>
-              </ion-button>
-              <ion-button color="danger" (click)="rechazar.emit(solicitud)">
+              <ion-button color="medium" (click)="rechazar.emit(solicitud)">
                 <ion-label>Rechazar</ion-label>
                 <ion-icon name="arrow-undo" slot="start"></ion-icon>
+              </ion-button>
+              <ion-button color="primary" (click)="autorizar.emit(solicitud)">
+                <ion-label>Autorizar </ion-label>
+                <ion-icon name="checkmark-done" slot="start"></ion-icon>
               </ion-button>
             </ion-buttons>
           </ion-toolbar>
