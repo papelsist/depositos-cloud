@@ -58,7 +58,8 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
                   <ion-label
                     >Rechazo:
                     {{
-                      sol.rechazo.fecha | date: 'dd/MM/yyyy HH:mm'
+                      sol.rechazo.dateCreated.toDate()
+                        | date: 'dd/MM/yyyy HH:mm'
                     }}</ion-label
                   >
                 </ion-chip>

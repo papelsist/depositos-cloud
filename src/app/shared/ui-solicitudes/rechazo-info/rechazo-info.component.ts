@@ -21,7 +21,7 @@ import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
         <p>
           Por: {{ rechazo.userName }}
           <span class="ion-padding-start">
-            {{ distanceFromNow(rechazo.dateCreated.toDate()) }}
+            {{ distanceFromNow(rechazo.dateCreated.toDate().toISOString()) }}
           </span>
           <span class="ion-padding-start">{{
             rechazo.dateCreated.toDate().toISOString()

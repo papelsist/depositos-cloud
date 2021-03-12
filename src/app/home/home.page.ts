@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../@auth/auth.service';
+import { DisplayModeService } from '../core/display-mode.service';
 
 @Component({
   selector: 'app-home',
@@ -10,6 +11,7 @@ import { AuthService } from '../@auth/auth.service';
 export class HomePage implements OnInit {
   user$ = this.authService.currentUser$;
   verified$ = this.user$.pipe(map((user) => user.emailVerified));
+
   constructor(private authService: AuthService) {}
 
   ngOnInit() {}
