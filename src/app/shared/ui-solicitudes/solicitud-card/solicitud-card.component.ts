@@ -29,7 +29,7 @@ export class SolicitudCardComponent implements OnInit {
   }
 
   updateRetraso() {
-    let fecha = parseISO(this.solicitud.fecha);
+    let fecha = parseISO(this.solicitud.lastUpdated);
     if (this.isSBC()) {
       fecha = addBusinessDays(fecha, 1); //addHours(fecha, 24);
     }

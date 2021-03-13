@@ -53,7 +53,7 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
                     {{ sol.total | currency }}
                   </h2>
                 </ion-text>
-                <ion-chip class="ion-text-center">
+                <ion-chip class="ion-text-center" *ngIf="sol.rechazo">
                   <ion-icon name="close-circle" color="warning"></ion-icon>
                   <ion-label
                     >Rechazo:

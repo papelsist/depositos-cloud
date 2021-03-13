@@ -2,8 +2,7 @@ import { Autorizacion, AutorizacionRechazo } from './autorizacion';
 import { Banco } from './banco';
 import { Cliente } from './cliente';
 import { CuentaDeBanco } from './cuenta-de-banco';
-import { Sucursal } from './sucursal';
-import firebase from 'firebase/app';
+
 import { User } from './user';
 
 export interface SolicitudDeDeposito {
@@ -11,6 +10,7 @@ export interface SolicitudDeDeposito {
   folio: number;
   sucursal: string;
   sucursalId: string;
+  callcenter?: boolean;
   fecha: string;
   cliente: Partial<Cliente>;
   banco: Partial<Banco>;
@@ -31,6 +31,7 @@ export interface SolicitudDeDeposito {
   rechazo?: AutorizacionRechazo;
   rechasosAnteriores?: AutorizacionRechazo[];
   status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO';
+  appVersion?: number;
 }
 
 export interface UpdateSolicitud {

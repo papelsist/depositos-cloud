@@ -27,9 +27,7 @@ export class AuthService {
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => {
-      return user
-        ? this.getUserByEmail(user.email)
-        : throwError('No existen detalles del usuario: ' + user.email);
+      return user ? this.getUserByEmail(user.email) : of(null);
     }),
     catchError((err) => throwError(err))
   );

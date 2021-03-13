@@ -31,12 +31,11 @@ export class AppComponent implements OnInit {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
     });
+    this.displayService.startDarkMode();
   }
 
   ngOnInit() {
-    // this.displayService.toggleDisplayMode();
     // this.logSecurityState();
-    // this.user$.subscribe((user) => console.log('USER: ', user));
   }
 
   /**

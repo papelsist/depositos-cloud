@@ -60,14 +60,14 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
               size-md="2"
               size-lg="2"
             >
-              <h5>
-                {{ sol.fechaDeposito | date: 'dd/MM/yyyy : HH:mm' }}
-              </h5>
               <h5 class="retraso">
+                Act: {{ sol.lastUpdated | date: 'dd/MM/yyyy : HH:mm' }}
+              </h5>
+              <p>
                 <ion-text [color]="retrasoColor">
                   {{ retraso }}
                 </ion-text>
-              </h5>
+              </p>
             </ion-col>
 
             <!-- 4 Cliente -->
@@ -155,7 +155,7 @@ export class SolicitudListItemComponent implements OnInit {
   }
 
   updateRetraso() {
-    let fecha = parseISO(this.sol.fecha);
+    let fecha = parseISO(this.sol.lastUpdated);
     if (this.isSBC()) {
       fecha = addBusinessDays(fecha, 1); //addHours(fecha, 24);
     }

@@ -13,7 +13,7 @@
         <span>Fecha: {{ sol.fechaDeposito | date: 'dd/MM/yyyy' }}</span>
       </div>
       <p class="row">
-        <span>
+        <span *ngIf="sol.autorizacion">
           Autorizó: {{ sol.autorizacion.user.displayName }} ({{
             sol.autorizacion.fecha | date: 'dd/MM/yyyy: hh:MM'
           }})

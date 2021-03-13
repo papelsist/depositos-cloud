@@ -15,8 +15,8 @@ import {
 } from '@angular/fire/auth-guard';
 import { IntroductionGuard } from './intro/intro.guard';
 
-const autorizaDepositos = () => hasCustomClaim('autorizarDepositos');
-const registrarDepositos = () => hasCustomClaim('REGISTRAR_DEPOSITOS');
+const autorizaDepositos = () => hasCustomClaim('xpapDepositosAutorizar');
+const registrarDepositos = () => hasCustomClaim('xpapDepositosCrear');
 
 const routes2: Routes = [
   {
@@ -42,8 +42,8 @@ const routes2: Routes = [
           import('./solicitudes/solicitudes-tab/solicitudes-tab.module').then(
             (m) => m.SolicitudesTabPageModule
           ),
-        // ...canActivate(registrarDepositos),
-        ...canActivate(redirectUnauthorized),
+        ...canActivate(registrarDepositos),
+        // ...canActivate(redirectUnauthorized),
       },
       {
         path: 'autorizaciones',
@@ -51,8 +51,8 @@ const routes2: Routes = [
           import(
             './autorizaciones/autotirzaciones-tab/autotirzaciones-tab.module'
           ).then((m) => m.AutotirzacionesTabPageModule),
-        // ...canActivate(autorizaDepositos),
-        ...canActivate(redirectUnauthorized),
+        ...canActivate(autorizaDepositos),
+        // ...canActivate(redirectUnauthorized),
       },
       {
         path: 'settings',

@@ -18,13 +18,13 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-no-padding" *ngIf="pendientes$ | async as solicituds">
+<ion-content class="ion-no-padding">
   <papx-solicitudes-cards-view
-    [solicitudes]="solicituds"
+    [solicitudes]="pendientes$ | async "
     *ngIf="config.view === 'cards'"
   ></papx-solicitudes-cards-view>
   <papx-solicitudes-list-view
-    [solicitudes]="solicituds"
+    [solicitudes]="pendientes$ | async "
     (selection)="onSelection($event)"
     *ngIf="config.view === 'list'"
   >

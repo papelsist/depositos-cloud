@@ -51,9 +51,16 @@
               {{ solicitud.sucursal }}
             </ion-text>
           </p>
-          <h3>Solicito: {{ solicitud.solicita }}</h3>
+          <h3>
+            Solicito: {{ solicitud.solicita }}
+            <span class="ion-padding-start">
+              ({{ solicitud.fecha | date: 'dd/MM/yyy HH:mm' }})
+            </span>
+          </h3>
           <p class="fecha">
-            {{ solicitud.fecha | date: 'dd/MM/yyy HH:mm' }}
+            <span *ngIf="solicitud.lastUpdated">
+              Actualizado:{{ solicitud.lastUpdated | date: 'dd/MM/yyy HH:mm' }}
+            </span>
             <ion-text [color]="retrasoColor" class="ion-padding-start">
               {{ retraso }}
             </ion-text>

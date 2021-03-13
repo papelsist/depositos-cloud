@@ -35,7 +35,7 @@ export class SolicitudesService {
 
   autorizadas$ = this.afs
     .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
-      ref.where('status', '==', 'AUTORIZADO').limit(200)
+      ref.where('status', '==', 'AUTORIZADO').limit(20)
     )
     .snapshotChanges()
     .pipe(
@@ -59,7 +59,7 @@ export class SolicitudesService {
 
   rechazadas$ = this.afs
     .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
-      ref.where('status', '==', 'RECHAZADO').limit(200)
+      ref.where('status', '==', 'RECHAZADO').limit(20)
     )
     .valueChanges({ idField: 'id' })
     .pipe(shareReplay());
@@ -72,16 +72,6 @@ export class SolicitudesService {
     private readonly fns: AngularFireFunctions
   ) {}
 
-  async save(solicitud: Partial<SolicitudDeDeposito>) {
-    const sol = await this.afs
-      .collection<Partial<SolicitudDeDeposito>>('solicitudes')
-      .add(solicitud);
-    if (!sol) {
-      throw Error(`Error salvando solicitud en firebase`);
-    }
-    return sol;
-  }
-
   async createSolicitud(solicitud: Partial<SolicitudDeDeposito>, user: User) {
     try {
       const payload = {
@@ -89,7 +79,8 @@ export class SolicitudesService {
         fecha: new Date().toISOString(),
         uid: user.uid,
         createUser: user.displayName,
-        dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+        // dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
+        dateCreated: firebase.firestore.Timestamp.now(),
         appVersion: 2,
       };
 
@@ -151,7 +142,7 @@ export class SolicitudesService {
 
   findPendientesPorSucursal(
     sucursal: string,
-    max: number = 100
+    max: number = 20
   ): Observable<SolicitudDeDeposito[]> {
     return this.findPorSucursal(sucursal, 'PENDIENTE', max);
   }
@@ -159,7 +150,7 @@ export class SolicitudesService {
   findPorSucursal(
     sucursal: string,
     status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO' | 'ATENDIDO',
-    max: number = 100
+    max: number = 20
   ): Observable<SolicitudDeDeposito[]> {
     console.log('Buscando solicitudes: ', status, sucursal);
     return this.afs

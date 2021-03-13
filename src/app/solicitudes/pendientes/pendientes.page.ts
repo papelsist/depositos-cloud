@@ -58,7 +58,10 @@ export class PendientesPage extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.authService.userInfo$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        filter((user) => !user),
+        takeUntil(this.destroy$)
+      )
       .subscribe((user) => {
         this.user = user;
         const { sucursal, uid } = user;

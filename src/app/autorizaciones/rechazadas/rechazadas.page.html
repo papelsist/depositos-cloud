@@ -25,13 +25,15 @@
           <span>{{ sol.banco.nombre }}</span>
           <span>{{ sol.cuenta.descripcion }} ({{ sol.cuenta.numero }})</span>
           <span>Fecha: {{ sol.fechaDeposito | date: 'dd/MM/yyyy' }}</span>
-          <span>
-            <ion-text color="warning"> {{sol.rechazo.motivo}} </ion-text>
-          </span>
-          <span>
-            {{sol.rechazo.dateCreated.toDate() | date: 'dd/MM/yyyy HH:mm'}}
-          </span>
-          <span> {{sol.rechazo.userName}} </span>
+          <ng-container *ngIf="sol.rechazo">
+            <span>
+              <ion-text color="warning"> {{sol?.rechazo?.motivo}} </ion-text>
+            </span>
+            <span>
+              {{sol.rechazo.dateCreated.toDate() | date: 'dd/MM/yyyy HH:mm'}}
+            </span>
+            <span> {{sol.rechazo.userName}} </span>
+          </ng-container>
         </div>
 
         <!-- <p class="row">

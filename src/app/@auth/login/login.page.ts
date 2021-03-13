@@ -15,7 +15,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class LoginPage extends BaseComponent implements OnInit {
   form: FormGroup = new FormGroup({
-    email: new FormControl('luxsoft.cancino@gmail.com', {
+    email: new FormControl(null, {
       validators: [Validators.required, Validators.email],
     }),
     password: new FormControl(null, { validators: [Validators.required] }),

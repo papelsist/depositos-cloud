@@ -20,7 +20,7 @@ import {
 } from '@ionic/angular';
 import { AutorizarModalComponent } from './autorizar-modal/autorizar-modal.component';
 import { AuthService } from '@papx/auth';
-import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solicitud-detail-modal/solicitud-detail-modal.component';
+
 import { SolicitudPendienteModalComponent } from './pendiente-modal/pendiente-modal.component';
 import { RechazarModalComponent } from './rechazar-modal/rechazar-modal.component';
 
