@@ -50,7 +50,7 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
                 <ion-label
                   >Autorizada:
                   {{
-                    sol.autorizacion.fecha | date: 'dd/MM/yyyy HH:mm'
+                    sol.autorizacion.fecha.toDate() | date: 'dd/MM/yyyy HH:mm'
                   }}</ion-label
                 >
               </ion-chip>
