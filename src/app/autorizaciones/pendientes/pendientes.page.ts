@@ -8,7 +8,7 @@ import {
   Autorizacion,
   AutorizacionRechazo,
   SolicitudDeDeposito,
-  UserInfo,
+  User,
 } from '@papx/models';
 import { BaseComponent } from 'src/app/core';
 import { SolicitudCardComponent } from '@papx/shared/ui-solicitudes/solicitud-card/solicitud-card.component';
@@ -35,7 +35,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
   _pauseResume$ = new BehaviorSubject<boolean>(true);
   @ViewChildren(SolicitudCardComponent)
   elements: QueryList<SolicitudCardComponent>;
-  session$ = this.auth.userInfo$;
+  session$ = this.auth.currentUser$;
 
   timer$ = timer(5000, 60000 * 5).pipe(
     withLatestFrom(this._pauseResume$),
@@ -85,7 +85,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
     this._pauseResume$.next(false);
   }
 
-  async onSelection(solicitud: Partial<SolicitudDeDeposito>, user: UserInfo) {
+  async onSelection(solicitud: Partial<SolicitudDeDeposito>, user: User) {
     const modal = await this.modal.create({
       component: SolicitudPendienteModalComponent,
       cssClass: 'solicitud-pendiente-modal',
@@ -104,7 +104,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
     }
   }
 
-  async onAutorizar(solicitud: Partial<SolicitudDeDeposito>, user: UserInfo) {
+  async onAutorizar(solicitud: Partial<SolicitudDeDeposito>, user: User) {
     // console.log('Autorizar: ', solicitud);
     const duplicados = await this.service.buscarDuplicado(solicitud);
     const posibleDuplicado = duplicados.length > 0 ? duplicados[0] : null;
@@ -117,10 +117,11 @@ export class PendientesPage extends BaseComponent implements OnInit {
     await modal.present();
     const { data } = await modal.onDidDismiss();
     if (data) {
-      const { uid, displayName, email } = user;
+      const { uid, displayName } = user;
       const autorizacion: Autorizacion = {
         ...data,
-        user: { uid, displayName, email },
+        uid,
+        createUser: displayName,
       };
       if (posibleDuplicado) {
         autorizacion.comentario =
@@ -135,7 +136,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
     }
   }
 
-  async onRechazar(solicitud: Partial<SolicitudDeDeposito>, user: UserInfo) {
+  async onRechazar(solicitud: Partial<SolicitudDeDeposito>, user: User) {
     const pop = await this.popover.create({
       component: RechazarModalComponent,
       componentProps: { solicitud },

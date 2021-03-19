@@ -10,6 +10,7 @@ export interface SolicitudDeDeposito {
   folio: number;
   sucursal: string;
   sucursalId: string;
+  tipo: 'CRE' | 'CHE' | 'JUR' | 'CHO' | 'CON';
   callcenter?: boolean;
   fecha: string;
   cliente: Partial<Cliente>;

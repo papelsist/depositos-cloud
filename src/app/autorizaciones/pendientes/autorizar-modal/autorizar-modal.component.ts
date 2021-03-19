@@ -4,13 +4,8 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
-import { ModalController, PopoverController } from '@ionic/angular';
-import {
-  Autorizacion,
-  AutorizacionRechazo,
-  SolicitudDeDeposito,
-  TipoDeAutorizacion,
-} from '@papx/models';
+import { PopoverController } from '@ionic/angular';
+import { Autorizacion, SolicitudDeDeposito } from '@papx/models';
 
 @Component({
   selector: 'papx-autorizar-deposito-modal',
@@ -115,9 +110,6 @@ export class AutorizarModalComponent implements OnInit {
 
   autorizar() {
     const autorizacion: Partial<Autorizacion> = {
-      fecha: new Date().toISOString(),
-      tipo: 'TRANSACCION_BANCARIA',
-      autorizo: 'PORTAL BANCARIO',
       comentario: `${
         this.solicitud.transferencia > 0 ? 'TRANSFERENCIA' : 'DEPOSITO'
       }`,

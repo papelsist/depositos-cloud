@@ -16,7 +16,6 @@ import { Banco } from '@papx/models';
     <ion-item>
       <ion-label position="floating">Banco orgien</ion-label>
       <ion-select
-        placeholder="Seleccione un banco"
         [compareWith]="compareWith"
         interface="popover"
         [interfaceOptions]="customPopoverOptions"

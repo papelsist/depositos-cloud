@@ -6,9 +6,11 @@ import {
 } from '@angular/core';
 import { AutorizacionRechazo } from '@papx/models';
 
-import parseISO from 'date-fns/parseISO';
-import es from 'date-fns/locale/es';
-import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
+import { parseISO, formatDistanceToNowStrict } from 'date-fns';
+
+// import es from 'date-fns/locale/es';
+import { es } from 'date-fns/locale';
+// import format from 'date-fns/format';
 
 @Component({
   selector: 'papx-rechazo-info',

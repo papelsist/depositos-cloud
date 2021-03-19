@@ -9,10 +9,11 @@ import {
 } from '@papx/models';
 import { SolicitudesService } from '@papx/data-access';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { AuthService } from '@papx/auth';
 import { AlertController } from '@ionic/angular';
 import { UserInfo } from '@papx/models';
+import { map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-solicitud',
@@ -21,11 +22,17 @@ import { UserInfo } from '@papx/models';
 })
 export class CreateSolicitudPage implements OnInit {
   cartera: Cartera = 'CON';
-  form = new FormGroup({
-    cliente: new FormControl(null, [Validators.required]),
-  });
-  session$ = this.auth.userInfo$;
-  user$ = this.auth.currentUser$;
+
+  vm$ = combineLatest([this.auth.userInfo$, this.auth.claims$]).pipe(
+    map(([user, claims]) => ({
+      user,
+      claims,
+      sucursal: user.sucursal || 'FALTA_SUCURSAL',
+      creditoUser: !!claims.xpapCxcUser,
+      cartera: user.sucursal === 'OFICINAS' ? 'CRE' : 'CON',
+    }))
+  );
+
   constructor(
     private service: SolicitudesService,
     private auth: AuthService,
@@ -33,10 +40,17 @@ export class CreateSolicitudPage implements OnInit {
     private alertController: AlertController
   ) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.vm$
+      .pipe(take(1))
+      .subscribe((vm) => (this.cartera = vm.cartera as Cartera));
+  }
 
   async onSave(sol: Partial<SolicitudDeDeposito>, user: User) {
     try {
+      sol.tipo = this.cartera;
+      console.log('Crear solicitud: ', sol);
+      // console.log('User: ', user);
       const fol = await this.service.createSolicitud(sol, user);
       this.router.navigate(['solicitudes']);
     } catch (error) {

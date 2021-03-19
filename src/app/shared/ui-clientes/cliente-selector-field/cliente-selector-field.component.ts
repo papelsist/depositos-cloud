@@ -55,7 +55,9 @@ export class ClienteSelectorFieldComponent implements ControlValueAccessor {
     const modal = await this.modalController.create({
       component: ClienteSelectorComponent,
       cssClass: 'cteSelector',
-      componentProps: {},
+      componentProps: {
+        tipo: this.tipo,
+      },
     });
     await modal.present();
     const { data } = await modal.onWillDismiss();

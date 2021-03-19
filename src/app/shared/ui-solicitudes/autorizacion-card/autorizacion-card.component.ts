@@ -8,11 +8,13 @@ import {
 } from '@angular/core';
 import { SolicitudDeDeposito } from '@papx/models';
 
-import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
-import parseISO from 'date-fns/parseISO';
+import {
+  formatDistanceToNowStrict,
+  parseISO,
+  differenceInHours,
+  addBusinessDays,
+} from 'date-fns';
 import es from 'date-fns/locale/es';
-import differenceInHours from 'date-fns/differenceInHours';
-import addBusinessDays from 'date-fns/addBusinessDays';
 
 @Component({
   selector: 'papx-autorizacion-card',

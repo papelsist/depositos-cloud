@@ -16,7 +16,6 @@ import { CuentaDeBanco } from '@papx/models';
     <ion-item>
       <ion-label position="floating">Cuenta destino</ion-label>
       <ion-select
-        placeholder="Seleccione una cuenta"
         [compareWith]="compareWith"
         interface="popover"
         [interfaceOptions]="customPopoverOptions"

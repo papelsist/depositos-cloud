@@ -5,7 +5,14 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireFunctions } from '@angular/fire/functions';
 
 import { throwError, of, Observable } from 'rxjs';
-import { catchError, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  map,
+  shareReplay,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 
 import { User, UserInfo } from '../@models/user';
 import { mapUser } from './utils';
@@ -13,22 +20,25 @@ import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  // readonly currentUser$ = this.auth.user;
   readonly hostUrl = 'http://localhost:8100/';
 
   readonly currentUser$ = this.auth.user.pipe(
     map((user) => (user ? mapUser(user) : null)),
+    take(1),
     shareReplay()
   );
 
   readonly claims$ = this.auth.idTokenResult.pipe(
-    map((res) => (res ? res.claims : {}))
+    map((res) => (res ? res.claims : {})),
+    take(1),
+    shareReplay()
   );
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => {
       return user ? this.getUserByEmail(user.email) : of(null);
     }),
+    shareReplay(),
     catchError((err) => throwError(err))
   );
 

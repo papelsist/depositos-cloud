@@ -1,7 +1,7 @@
 <ion-card mode="ios">
   <ion-card-header>
     <ion-card-title class="ion-text-center">
-      Id: {{ solicitud.folio }}
+      Folio: {{ solicitud.folio }}
       <ion-text color="primary">
         <span class="ion-padding-start">{{ solicitud.total | currency }}</span>
       </ion-text>
@@ -51,12 +51,7 @@
               {{ solicitud.sucursal }}
             </ion-text>
           </p>
-          <h3>
-            Solicito: {{ solicitud.solicita }}
-            <span class="ion-padding-start">
-              ({{ solicitud.fecha | date: 'dd/MM/yyy HH:mm' }})
-            </span>
-          </h3>
+          <h3>Solicito: {{ solicitud.solicita }}</h3>
           <p class="fecha">
             <span *ngIf="solicitud.lastUpdated">
               Actualizado:{{ solicitud.lastUpdated | date: 'dd/MM/yyy HH:mm' }}

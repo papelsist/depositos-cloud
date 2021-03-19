@@ -7,11 +7,13 @@ import {
   EventEmitter,
 } from '@angular/core';
 
-import formatDistanceToNowStrict from 'date-fns/formatDistanceToNowStrict';
-import parseISO from 'date-fns/parseISO';
+import {
+  parseISO,
+  formatDistanceToNowStrict,
+  differenceInHours,
+  addBusinessDays,
+} from 'date-fns';
 import es from 'date-fns/locale/es';
-import differenceInHours from 'date-fns/differenceInHours';
-import addBusinessDays from 'date-fns/addBusinessDays';
 
 import { SolicitudDeDeposito } from '@papx/models';
 import { ModalController } from '@ionic/angular';

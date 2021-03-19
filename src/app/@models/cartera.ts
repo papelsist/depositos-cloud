@@ -10,6 +10,8 @@ export function carteraDisplayName(cartera: Cartera): string {
       return 'Cheques';
     case 'JUR':
       return 'Jurídico';
+    case 'CHO':
+      return 'Choferes';
     default:
       return '';
   }
@@ -25,6 +27,8 @@ export function resolveCarteraPath(tipoCartera: Cartera): string {
       return 'cheque';
     case 'JUR':
       return 'juridico';
+    case 'CHO':
+      return 'choferes';
     default:
       return '';
   }

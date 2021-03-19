@@ -10,6 +10,8 @@ import { SharedUiBancosModule } from '@papx/shared/ui-bancos';
 
 import { CreateSolicitudPage } from './create-solicitud.page';
 import { SolicitudCreateFormComponent } from './create-form/solicitud-create-form.component';
+import { CarteraSelectorComponent } from './cartera-selector/cartera-selector.component';
+import { CarterasPopoverComponent } from './cartera-selector/carteras-popover.component';
 
 @NgModule({
   imports: [
@@ -26,6 +28,11 @@ import { SolicitudCreateFormComponent } from './create-form/solicitud-create-for
       },
     ]),
   ],
-  declarations: [CreateSolicitudPage, SolicitudCreateFormComponent],
+  declarations: [
+    CreateSolicitudPage,
+    SolicitudCreateFormComponent,
+    CarteraSelectorComponent,
+    CarterasPopoverComponent,
+  ],
 })
 export class CreateSolicitudPageModule {}

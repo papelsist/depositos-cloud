@@ -1,22 +1,22 @@
 <form [formGroup]="form">
   <ion-grid>
     <ion-row>
-      <ion-col>
+      <ion-col size="12">
         <papelx-cliente-selector-field
+          [tipo]="tipo == 'CRE' ? 'CREDITO' : 'TODOS'"
           formControlName="cliente"
         ></papelx-cliente-selector-field>
       </ion-col>
     </ion-row>
     <ion-row>
-      <ion-col size="12">
+      <ion-col size="12" size-md="6">
         <papelx-banco-field formControlName="banco"></papelx-banco-field>
       </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col size="12">
+      <ion-col size="12" size-md="6">
         <papelx-cuenta-field formControlName="cuenta"></papelx-cuenta-field>
       </ion-col>
     </ion-row>
+
     <ion-row>
       <ion-col size="12" size-sm="6" size-md="4">
         <ion-item>
@@ -46,7 +46,6 @@
           <ion-datetime
             pickerFormat="DD MMM YYYY"
             displayFormat="DD MMM YYYY"
-            placeholder="Seleccione la fecha"
             monthShortNames="ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dis"
             cancelText="Cancelar"
             doneText="Seleccionar"

@@ -1,17 +1,22 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-title> Catálogo de clientes </ion-title>
+    <ion-title>
+      Catálogo de clientes
+      {{ tipo === 'CREDITO' ? 'de crédito' : '' }}</ion-title
+    >
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-list-header>
     <ion-searchbar
+      #search
       showCancelButton="focus"
       animated
-      placeholder="Buscar cliente"
+      [placeholder]="placeholder"
       color="tertiary"
       (ionChange)="onSearch($event)"
       (ionCancel)="close()"
+      (keyup.enter)="onSearAll(search.value)"
     ></ion-searchbar>
   </ion-list-header>
   <ion-list lines="full">
@@ -31,7 +36,9 @@
         </ion-text>
       </ion-label>
 
-      <ion-note slot="end" color="secondary"> Crédito </ion-note>
+      <ion-note slot="end" color="warning">
+        {{ c.credito ? 'Crédito' : c['tipo'] ? c['tipo'] : '' }}
+      </ion-note>
     </ion-item>
   </ion-list>
 </ion-content>

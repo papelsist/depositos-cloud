@@ -24,6 +24,8 @@ import {
   NEW_ORIGIN_BEHAVIOR,
 } from '@angular/fire/functions';
 
+import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
+
 import { environment } from '../../environments/environment';
 /*
 export function initializeApp1(afa: AngularFireAuth): any {
@@ -62,6 +64,7 @@ export function initializeApp1(afa: AngularFireAuth): any {
       provide: FUNCTIONS_ORIGIN,
       useFactory: () => (isDevMode() ? undefined : location.origin),
     },
+    { provide: BUCKET, useValue: 'papx-ws-dev.appspot.com' },
     /* Delay the app initialization process by 100ms
     {
       provide: APP_INITIALIZER,

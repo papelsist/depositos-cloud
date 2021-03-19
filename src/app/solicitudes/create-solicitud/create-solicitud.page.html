@@ -1,28 +1,31 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/solicitudes"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Solicitud de depósito</ion-title>
-    <ion-buttons slot="end">
-      <ion-button color="tertiary" fill="outline" shape="round" strong="true">
-        {{carteraName}}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+<ng-container *ngIf="vm$ | async as vm">
+  <ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/solicitudes"></ion-back-button>
+      </ion-buttons>
+      <ion-title
+        >Solicitud de depósito
+        <span class="sucursal">({{vm.sucursal}})</span>
+      </ion-title>
+      <ion-buttons slot="end">
+        <papx-cartera-selector [(cartera)]="cartera"></papx-cartera-selector>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
 
-<ion-content class="ion-padding" *ngIf="session$ | async as session">
-  <papx-solicitud-create-form
-    [tipo]="cartera"
-    [sucursal]="session.sucursal"
-    [solcita]="session.nombre"
-    (save)="onSave($event, session)"
-    (valueReady)="validarDuplicado($event)"
-  ></papx-solicitud-create-form>
-</ion-content>
-<ion-footer *ngIf="session$ | async as session">
-  <ion-toolbar>
-    <ion-title size="small" slot="end"> {{session.displayName}} </ion-title>
-  </ion-toolbar>
-</ion-footer>
+  <ion-content class="ion-padding">
+    <papx-solicitud-create-form
+      [tipo]="cartera"
+      [sucursal]="vm.sucursal"
+      [solcita]="vm.user.nombre"
+      (save)="onSave($event, vm.user)"
+      (valueReady)="validarDuplicado($event)"
+    ></papx-solicitud-create-form>
+  </ion-content>
+  <ion-footer>
+    <ion-toolbar>
+      <ion-title size="small" slot="end"> {{vm.user.displayName}} </ion-title>
+    </ion-toolbar>
+  </ion-footer>
+</ng-container>

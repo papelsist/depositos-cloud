@@ -20,7 +20,7 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClienteSelectorComponent implements OnInit {
-  @Input() tipo: 'CREDITO' | 'CONTADO' | 'TODOS' = 'CREDITO';
+  @Input() tipo: 'CREDITO' | 'TODOS' = 'TODOS';
   filter$ = new BehaviorSubject('');
   clientes$: Observable<Partial<Cliente>[]>;
 
@@ -58,5 +58,15 @@ export class ClienteSelectorComponent implements OnInit {
 
   onSearch({ target: { value } }) {
     this.filter$.next(value);
+  }
+
+  onSearAll(term: string) {
+    this.clientes$ = this.service.searchClientes(term, 5);
+  }
+
+  get placeholder() {
+    return this.tipo === 'CREDITO'
+      ? 'Filtrar'
+      : 'Buscar cliente por nombre y/o RFC';
   }
 }

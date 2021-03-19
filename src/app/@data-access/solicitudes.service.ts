@@ -7,8 +7,8 @@ import firebase from 'firebase/app';
 
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay, take } from 'rxjs/operators';
-import parseJSON from 'date-fns/parseJSON';
-import isSameDay from 'date-fns/isSameDay';
+
+import { isSameDay, parseJSON } from 'date-fns';
 
 import {
   SolicitudDeDeposito,
@@ -22,8 +22,8 @@ export class SolicitudesService {
   readonly COLLECTION = 'solicitudes';
 
   pendientesPorAutorizar$ = this.afs
-    .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
-      ref.where('status', '==', 'PENDIENTE')
+    .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
+      ref.where('status', '==', 'PENDIENTE').where('sucursal', '==', 'OFICINAS')
     )
     .valueChanges({ idField: 'id' })
     .pipe(shareReplay());
@@ -34,7 +34,7 @@ export class SolicitudesService {
   );
 
   autorizadas$ = this.afs
-    .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
+    .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
       ref.where('status', '==', 'AUTORIZADO').limit(20)
     )
     .snapshotChanges()
@@ -58,7 +58,7 @@ export class SolicitudesService {
   );
 
   rechazadas$ = this.afs
-    .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
+    .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
       ref.where('status', '==', 'RECHAZADO').limit(20)
     )
     .valueChanges({ idField: 'id' })
@@ -79,8 +79,8 @@ export class SolicitudesService {
         fecha: new Date().toISOString(),
         uid: user.uid,
         createUser: user.displayName,
-        // dateCreated: firebase.firestore.FieldValue.serverTimestamp(),
-        dateCreated: firebase.firestore.Timestamp.now(),
+        dateCreated: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
         appVersion: 2,
       };
 
@@ -102,16 +102,19 @@ export class SolicitudesService {
         }
         folios[SUCURSAL] += 1;
         folio = folios[SUCURSAL];
-        // console.log('Folios entity: ', folios);
+
+        const acumulados: { [key: string]: any } = {};
+        acumulados[SUCURSAL] = {
+          pendientes: {
+            count: firebase.firestore.FieldValue.increment(1),
+            total: firebase.firestore.FieldValue.increment(solicitud.total),
+          },
+        };
 
         transaction
           .set(folioRef, folios, { merge: true })
           .set(solicitudRef, { ...payload, folio })
-          .set(
-            statsRef,
-            { count: firebase.firestore.FieldValue.increment(1) },
-            { merge: true }
-          );
+          .set(statsRef, acumulados, { merge: true });
         return folio;
       });
     } catch (error: any) {
@@ -122,7 +125,7 @@ export class SolicitudesService {
 
   async update(command: UpdateSolicitud) {
     try {
-      const doc = this.afs.doc(`solicitudes/${command.id}`);
+      const doc = this.afs.doc(`${this.COLLECTION}/${command.id}`);
       const data = {
         ...command.changes,
         lastUpdated: firebase.firestore.Timestamp.now(),
@@ -135,15 +138,28 @@ export class SolicitudesService {
 
   findAllPendientes(): Observable<SolicitudDeDeposito[]> {
     return this.afs
-      .collection<SolicitudDeDeposito>('solicitudes')
+      .collection<SolicitudDeDeposito>(this.COLLECTION)
       .valueChanges({ idField: 'id' })
       .pipe(catchError((err) => throwError(err)));
   }
 
-  findPendientesPorSucursal(
+  findPendientesByUser(uid: string) {
+    return this.afs
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
+        let query = ref
+          .where('uid', '==', uid)
+          .where('status', '==', 'PENDIENTE');
+        return query.limit(20);
+      })
+      .valueChanges({ idField: 'id' })
+      .pipe(catchError((err) => throwError(err)));
+  }
+
+  findPendientesBySucursal(
     sucursal: string,
     max: number = 20
   ): Observable<SolicitudDeDeposito[]> {
+    console.log('Fetching pendientes Sucursal:', sucursal);
     return this.findPorSucursal(sucursal, 'PENDIENTE', max);
   }
 
@@ -152,9 +168,8 @@ export class SolicitudesService {
     status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO' | 'ATENDIDO',
     max: number = 20
   ): Observable<SolicitudDeDeposito[]> {
-    console.log('Buscando solicitudes: ', status, sucursal);
     return this.afs
-      .collection<SolicitudDeDeposito>('solicitudes', (ref) => {
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
         let query = ref
           .where('sucursal', '==', sucursal)
           .where('status', '==', status);
@@ -166,14 +181,14 @@ export class SolicitudesService {
 
   findPendientesPorAutorizar(): Observable<SolicitudDeDeposito[]> {
     return this.afs
-      .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
         ref.where('status', '==', 'PENDIENTE')
       )
       .valueChanges({ idField: 'id' });
   }
 
   get(id: string) {
-    const doc = this.afs.doc<SolicitudDeDeposito>(`solicitudes/${id}`);
+    const doc = this.afs.doc<SolicitudDeDeposito>(`${this.COLLECTION}/${id}`);
     return doc
       .valueChanges({ idField: 'id' })
       .pipe(catchError((err) => throwError(err)));
@@ -184,7 +199,9 @@ export class SolicitudesService {
     autorizacion: Autorizacion,
     posibleDuplicadoId?: string
   ) {
-    const doc = this.afs.doc(`solicitudes/${id}`);
+    const doc = this.afs.doc(`${this.COLLECTION}/${id}`);
+    autorizacion.fecha = firebase.firestore.Timestamp.now();
+
     await doc.update({
       autorizacion,
       status: 'AUTORIZADO',
@@ -196,7 +213,8 @@ export class SolicitudesService {
 
   async rechazar(id: string, rechazo: Partial<AutorizacionRechazo>) {
     rechazo.dateCreated = firebase.firestore.Timestamp.now();
-    const doc = this.afs.doc(`solicitudes/${id}`);
+    rechazo.replicado = null;
+    const doc = this.afs.doc(`${this.COLLECTION}/${id}`);
     await doc.update({
       rechazo,
       status: 'RECHAZADO',
@@ -205,10 +223,11 @@ export class SolicitudesService {
   }
 
   buscarDuplicado(sol: Partial<SolicitudDeDeposito>) {
+    console.log('Buscando  duplicado para: ', sol);
     const { total, cuenta, banco } = sol;
     const fechaDeposito = parseJSON(sol.fechaDeposito);
     return this.afs
-      .collection<SolicitudDeDeposito>('solicitudes', (ref) =>
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
         ref
           .where('total', '==', total)
           .where('cuenta.id', '==', cuenta.id)

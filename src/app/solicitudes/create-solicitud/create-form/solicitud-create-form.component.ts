@@ -69,7 +69,11 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
       referencia: [null, [Validators.required]],
       fechaDeposito: [null, [Validators.required]],
       solicita: [this.solcita, [Validators.required]],
-      sucursal: [this.sucursal, [Validators.required]],
+      sucursal: [
+        { value: this.sucursal, disabled: true },
+        [Validators.required],
+      ],
+      tipo: ['CON', [Validators.required]],
     });
   }
 
