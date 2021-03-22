@@ -14,9 +14,10 @@
       </div>
       <p class="row">
         <span *ngIf="sol.autorizacion">
-          Autorizó: {{ sol.autorizacion.user.displayName }} ({{
-            sol.autorizacion.fecha | date: 'dd/MM/yyyy: hh:MM'
+          Autorizó: {{ sol.autorizacion.createUser }} ({{
+            sol.autorizacion.fecha.toDate() | date: 'dd/MM/yyyy: hh:MM'
           }})
+          <span>Rep: {{ sol.autorizacion.replicado }}</span>
         </span>
       </p>
     </ion-label>

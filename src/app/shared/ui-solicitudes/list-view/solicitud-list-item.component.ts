@@ -88,7 +88,9 @@ import { ModalController } from '@ionic/angular';
                 {{ sol.solicita }}
               </h5>
               <ion-text color="warning">
-                <h5 class="sucursal">({{ sol.sucursal }} )</h5>
+                <h5 class="sucursal">
+                  ({{ sol.callcenter ? 'CALLCENTER' : sol.sucursal }} )
+                </h5>
               </ion-text>
             </ion-col>
           </ion-row>

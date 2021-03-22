@@ -12,6 +12,15 @@
             "value": "public,max-age=31536000,immutable"
           }
         ]
+      },
+      {
+        "source": "ngsw-config.js",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ],
     "rewrites": [

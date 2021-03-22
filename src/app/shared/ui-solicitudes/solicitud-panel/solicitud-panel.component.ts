@@ -122,6 +122,7 @@ import { SolicitudDeDeposito } from '@papx/models';
               <ion-label position="floating">Status:</ion-label>
               <ion-input [value]="solicitud.status"></ion-input>
               <ion-icon
+                *ngIf="solicitud.status === 'AUTORIZADO'"
                 slot="end"
                 name="checkmark-done-outline"
                 color="success"

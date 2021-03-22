@@ -23,7 +23,7 @@ export class SolicitudesService {
 
   pendientesPorAutorizar$ = this.afs
     .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
-      ref.where('status', '==', 'PENDIENTE').where('sucursal', '==', 'OFICINAS')
+      ref.where('status', '==', 'PENDIENTE')
     )
     .valueChanges({ idField: 'id' })
     .pipe(shareReplay());
@@ -201,11 +201,12 @@ export class SolicitudesService {
   ) {
     const doc = this.afs.doc(`${this.COLLECTION}/${id}`);
     autorizacion.fecha = firebase.firestore.Timestamp.now();
+    autorizacion.replicado = null;
 
     await doc.update({
       autorizacion,
       status: 'AUTORIZADO',
-      lastUpdated: firebase.firestore.Timestamp.now(),
+      lastUpdated: new Date().toISOString(),
       posibleDuplicadoId,
     });
     console.log('Autorización exitosa');
@@ -218,7 +219,7 @@ export class SolicitudesService {
     await doc.update({
       rechazo,
       status: 'RECHAZADO',
-      // lastUpdated: firebase.firestore.Timestamp.now(),
+      lastUpdated: new Date().toISOString(),
     });
   }
 

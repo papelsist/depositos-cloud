@@ -25,6 +25,7 @@ import {
 } from '@angular/fire/functions';
 
 import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 import { environment } from '../../environments/environment';
 /*
@@ -45,6 +46,8 @@ export function initializeApp1(afa: AngularFireAuth): any {
     AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireFunctionsModule,
+    AngularFireStorageModule,
+    AngularFireMessagingModule,
   ],
   providers: [
     {

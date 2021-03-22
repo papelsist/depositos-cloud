@@ -13,5 +13,7 @@ export class HomePage implements OnInit {
 
   constructor(private authService: AuthService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user$.subscribe((u) => console.log(u));
+  }
 }

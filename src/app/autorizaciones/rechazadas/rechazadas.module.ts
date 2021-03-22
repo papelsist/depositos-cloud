@@ -7,14 +7,17 @@ import { IonicModule } from '@ionic/angular';
 import { RechazadasPageRoutingModule } from './rechazadas-routing.module';
 
 import { RechazadasPage } from './rechazadas.page';
+import { RechazadaPage } from './rechazada/rechazada.page';
+import { SharedUiSolicitudesModule } from '@papx/shared/ui-solicitudes';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RechazadasPageRoutingModule
+    SharedUiSolicitudesModule,
+    RechazadasPageRoutingModule,
   ],
-  declarations: [RechazadasPage]
+  declarations: [RechazadasPage, RechazadaPage],
 })
 export class RechazadasPageModule {}
