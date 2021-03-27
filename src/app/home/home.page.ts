@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../@auth/auth.service';
 
@@ -11,7 +12,12 @@ export class HomePage implements OnInit {
   user$ = this.authService.currentUser$;
   verified$ = this.user$.pipe(map((user) => user.emailVerified));
 
-  constructor(private authService: AuthService) {}
+  data = [];
+
+  constructor(
+    private authService: AuthService,
+    private afs: AngularFirestore
+  ) {}
 
   ngOnInit() {
     this.user$.subscribe((u) => console.log(u));

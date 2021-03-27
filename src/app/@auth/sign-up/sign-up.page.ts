@@ -6,13 +6,13 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
 import { passwordMatch } from './password-match';
 
 import { AuthService } from '../auth.service';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 @Component({
   selector: 'papx-sign-up',
@@ -59,19 +59,20 @@ export class SignUpPage implements OnInit {
   constructor(
     private authService: AuthService,
     private loadingController: LoadingController,
+    private alert: AlertController,
     private router: Router
   ) {}
 
   ngOnInit() {
     // const val = {
-    //   email: 'luxsoft.cancino@gmail.com',
-    //   displayName: 'Ruben Cancino',
-    //   password: 'dodgers6',
+    //   email: 'manuelroman0708052@gmail.com',
+    //   displayName: 'Manuel Roman',
+    //   password: 'admin123',
+    //   confirmPassword: 'admin123',
     // };
     // this.form.patchValue(val);
-    // DEBUG
-    // this.authService.currentUser$.subscribe((user) =>
-    //   console.log('Current user: ', user)
+    // this.authService.user$.subscribe((user) =>
+    //   console.log('Current user signedIn:', user)
     // );
   }
 
@@ -88,39 +89,38 @@ export class SignUpPage implements OnInit {
       spinner: 'circles',
     });
 
-    loading.present();
-    /*
+    await loading.present();
+
     this.authService
-      .createUser(email, password)
-      .then((userCredentials) => {
-        userCredentials.user.updateProfile({ displayName });
-        this.error$.next(null);
-        this.router.navigate(['/']);
-      })
-      .catch((error) => {
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            this.error$.next('Usuario ya registrado');
-            break;
-          default:
-            console.error('Auth error:', error);
-            this.error$.next(error.message);
-            break;
-        }
-      })
-      .then(() => loading.dismiss());
-    */
-    this.authService
-      .createSiipapUser(email, password, displayName)
-      .pipe(finalize(() => loading.dismiss()))
+      .getUserByEmail(email)
+      .pipe(
+        map((user) => {
+          if (!user) {
+            throw new Error('No existe el empleado: ' + email);
+          }
+          return user;
+        }),
+        finalize(async () => loading.dismiss())
+      )
       .subscribe(
-        async (res) => {
-          const user = await res;
-          console.log('User registered: ', user);
-          this.router.navigate(['/']);
+        () => {
+          this.authService
+            .createUser(email, password)
+            .then((t) => {
+              t.user.updateProfile({ displayName });
+              return t.user;
+            })
+            .then(() => this.authService.singOut())
+            .then(() => this.router.navigate(['/', 'login']))
+            .catch((err) => this.handelError(err));
         },
-        (err) => console.error('Signup Error: ', err)
+        (err) => this.handelError(err)
       );
+
+    // this.authService.createUser(email, password, displayName).subscribe(
+    //   (siipapUser) => console.log('SiipapUser: ', siipapUser),
+    //   (error) => this.handelError(error)
+    // );
   }
 
   hasEmailError() {
@@ -156,5 +156,15 @@ export class SignUpPage implements OnInit {
 
   hasError(prop: string, code: string) {
     return this.controls[prop].hasError(code);
+  }
+
+  async handelError(err) {
+    const a = await this.alert.create({
+      message: err.message,
+      header: 'Error registrando usuario',
+      buttons: ['Aceptar'],
+      mode: 'ios',
+    });
+    await a.present();
   }
 }

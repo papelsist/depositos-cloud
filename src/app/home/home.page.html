@@ -27,6 +27,16 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+
+    <ion-list>
+      <ion-item *ngFor="let r of data">
+        <ion-label>
+          <p>{{r.dateCreated | date: 'dd/MM/yyyy: hh:mm'}}</p>
+
+          <h3>{{r.lastUpdated.toDate() | date: 'dd/MM/yyyy: hh:mm'}}</h3>
+        </ion-label>
+      </ion-item>
+    </ion-list>
   </ion-content>
   <!-- <ng-template #pending>
     <div class="pending-container">

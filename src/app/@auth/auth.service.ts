@@ -22,6 +22,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 export class AuthService {
   readonly hostUrl = 'http://localhost:8100/';
 
+  readonly user$ = this.auth.user;
+
   readonly currentUser$ = this.auth.user.pipe(
     map((user) => (user ? mapUser(user) : null)),
     take(1),
@@ -87,10 +89,12 @@ export class AuthService {
       email,
       password
     );
+    /*
     await credentials.user.sendEmailVerification({
       url: this.hostUrl,
       handleCodeInApp: false,
     });
+    */
     return credentials;
   }
 

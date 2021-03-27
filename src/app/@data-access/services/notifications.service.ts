@@ -1,48 +1,101 @@
 import { Injectable } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFireFunctions } from '@angular/fire/functions';
 import { AngularFireMessaging } from '@angular/fire/messaging';
-import { ToastController } from '@ionic/angular';
-import { mergeMap } from 'rxjs/operators';
+import { AlertController, ToastController } from '@ionic/angular';
+import { AuthService } from '@papx/auth';
+import { User, UserInfo } from '@papx/models';
+import { combineLatest, merge } from 'rxjs';
+import {
+  map,
+  mergeMap,
+  switchMap,
+  take,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
   token: string;
-  token$ = this.afm.getToken;
+  token$ = this.afm.tokenChanges.pipe(tap((token) => (this.token = token)));
 
   constructor(
     private afm: AngularFireMessaging,
-    private toast: ToastController
-  ) {
-    afm.getToken.subscribe((t) => {
-      this.token = t;
+    private firestore: AngularFirestore,
+    private functions: AngularFireFunctions,
+    private toastController: ToastController,
+    private alertController: AlertController
+  ) {}
+
+  requestPermission(user: UserInfo) {
+    this.afm.requestToken.subscribe(async (token) => {
+      await this.firestore.doc(`usuarios/${user.uid}`).update({ token });
+      this.showToast('Dispositivo autorizado');
     });
   }
 
-  requestToken() {
-    return this.afm.requestToken;
+  deleteToken(token: string, user: UserInfo) {
+    this.afm.deleteToken(token).subscribe(async (val) => {
+      await this.firestore.doc(`usuarios/${user.uid}`).update({ token: null });
+    });
   }
-  requestPermission() {
-    this.afm.requestToken.subscribe((token) =>
-      console.log('Permission granted token: ', token)
+
+  subscribeToTopic(token: string, topic: string) {
+    const callable = this.functions.httpsCallable('subscribeToTopic');
+    callable({ token, topic }).subscribe(
+      (res) => this.showToast(res),
+      (err) => this.handleError(err)
     );
   }
 
-  getMessages() {
-    return this.afm.messages;
+  unsubscribeToTopic(token: string, topic: string) {
+    const callable = this.functions.httpsCallable('unsubscribeToTopic');
+    callable({ token, topic }).subscribe(
+      (res) => this.showToast(res),
+      (err) => this.handleError(err)
+    );
   }
 
-  deleteToken() {
-    this.afm.getToken
-      .pipe(
-        mergeMap((token) => {
-          console.log('Deleting token: ', token);
-          this.token = null;
-          return this.afm.deleteToken(token);
-        })
-      )
-      .subscribe((token) => console.log('Token deleted'));
+  showMessage() {
+    this.afm.messages.pipe(
+      tap((msg) => {
+        const body: any = (msg as any).notification.body;
+        this.showToast(body);
+      })
+    );
   }
 
-  showMessage(message: any) {
-    console.log('Message: ', message);
+  async showToast(message: any) {
+    const toast = await this.toastController.create({
+      header: 'Notificación',
+      message,
+      color: 'warning',
+      duration: 8000,
+      position: 'bottom',
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+        },
+      ],
+    });
+    await toast.present();
+  }
+
+  async handleError(err: any) {
+    const alert = await this.alertController.create({
+      header: 'Error en Firebase',
+      message: err.message,
+      mode: 'ios',
+      translucent: true,
+      buttons: [
+        {
+          text: 'Cerrar',
+          role: 'cancel',
+        },
+      ],
+    });
+    await alert.present();
   }
 }

@@ -28,16 +28,16 @@ import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
 import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 import { environment } from '../../environments/environment';
-/*
-export function initializeApp1(afa: AngularFireAuth): any {
-  return () => {
-    return new Promise((resolve: any) => {
-      afa.useEmulator(`http://${location.hostname}:9099/`);
-      setTimeout(() => resolve(), 1000); // delay Angular initialization by 100ms
-    });
-  };
-}
-*/
+
+// export function initializeApp1(afa: AngularFireAuth): any {
+//   return () => {
+//     return new Promise((resolve: any) => {
+//       afa.useEmulator(`http://${location.hostname}:9099/`);
+//       setTimeout(() => resolve(), 1000); // delay Angular initialization by 100ms
+//     });
+//   };
+// }
+
 @NgModule({
   declarations: [],
   imports: [
@@ -68,14 +68,13 @@ export function initializeApp1(afa: AngularFireAuth): any {
       useFactory: () => (isDevMode() ? undefined : location.origin),
     },
     { provide: BUCKET, useValue: 'papx-ws-dev.appspot.com' },
-    /* Delay the app initialization process by 100ms
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initializeApp1,
-      deps: [AngularFireAuth],
-      multi: true,
-    },
-    */
+    /* Delay the app initialization process by 100ms*/
+    // {
+    //   provide: APP_INITIALIZER,
+    //   useFactory: initializeApp1,
+    //   deps: [AngularFireAuth],
+    //   multi: true,
+    // },
   ],
 })
 export class DataAccessModule {

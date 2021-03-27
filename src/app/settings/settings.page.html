@@ -18,14 +18,16 @@
       <ion-label> Inicio de sesión y seguridad </ion-label>
       <ion-icon name="key" slot="start"></ion-icon>
     </ion-item>
-    <ion-item>
+    <ion-item routerLink="notifications">
       <ion-label>Notificaciones</ion-label>
-      <ion-toggle [(ngModel)]="notificaciones"></ion-toggle>
       <ion-icon name="notifications" slot="start"></ion-icon>
     </ion-item>
     <ion-item routerLink="preferences">
       <ion-label> Preferencias </ion-label>
       <ion-icon name="cog" slot="start"></ion-icon>
+    </ion-item>
+    <ion-item>
+      <ion-label>Versión : 1.0.14 </ion-label>
     </ion-item>
   </ion-list>
 </ion-content>
