@@ -28,7 +28,7 @@ export class ClienteSelectorFieldComponent implements ControlValueAccessor {
   onTouch = () => {};
   disabled = false;
   value: ClienteDto;
-  @Input() tipo: 'CREDITO' | 'CONTADO' | 'TODOS' = 'CREDITO';
+
   constructor(
     private cd: ChangeDetectorRef,
     private modalController: ModalController
@@ -55,9 +55,7 @@ export class ClienteSelectorFieldComponent implements ControlValueAccessor {
     const modal = await this.modalController.create({
       component: ClienteSelectorComponent,
       cssClass: 'cteSelector',
-      componentProps: {
-        tipo: this.tipo,
-      },
+      componentProps: {},
     });
     await modal.present();
     const { data } = await modal.onWillDismiss();

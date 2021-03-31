@@ -20,7 +20,6 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClienteSelectorComponent implements OnInit {
-  @Input() tipo: 'CREDITO' | 'TODOS' = 'TODOS';
   filter$ = new BehaviorSubject('');
   clientes$: Observable<Partial<Cliente>[]>;
 
@@ -31,21 +30,7 @@ export class ClienteSelectorComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.tipo === 'CREDITO') {
-      this.clientes$ = this.service.clientesCredito$;
-      this.clientes$ = combineLatest([
-        this.filter$,
-        this.service.clientesCredito$,
-      ]).pipe(
-        map(([term, clientes]) =>
-          clientes.filter((item) =>
-            item.nombre.toLowerCase().includes(term.toLowerCase())
-          )
-        )
-      );
-    } else {
-      this.clientes$ = from([]);
-    }
+    this.clientes$ = from([]);
   }
 
   close() {
@@ -62,11 +47,5 @@ export class ClienteSelectorComponent implements OnInit {
 
   onSearAll(term: string) {
     this.clientes$ = this.service.searchClientes(term, 5);
-  }
-
-  get placeholder() {
-    return this.tipo === 'CREDITO'
-      ? 'Filtrar'
-      : 'Buscar cliente por nombre y/o RFC';
   }
 }

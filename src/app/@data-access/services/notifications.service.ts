@@ -3,22 +3,27 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireFunctions } from '@angular/fire/functions';
 import { AngularFireMessaging } from '@angular/fire/messaging';
 import { AlertController, ToastController } from '@ionic/angular';
-import { AuthService } from '@papx/auth';
-import { User, UserInfo } from '@papx/models';
-import { combineLatest, merge } from 'rxjs';
-import {
-  map,
-  mergeMap,
-  switchMap,
-  take,
-  tap,
-  withLatestFrom,
-} from 'rxjs/operators';
+
+import { UserInfo } from '@papx/models';
+import { Subject } from 'rxjs';
+
+import { map, mergeMap, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationsService {
   token: string;
-  token$ = this.afm.tokenChanges.pipe(tap((token) => (this.token = token)));
+  // token$ = this.afm.getToken.pipe(tap((token) => {
+  //   // (this.token = token)
+  // }));
+  token$ = new Subject<string>();
+
+  registeredTopics = JSON.parse(
+    localStorage.getItem('papx.notificaciones.topics') || '{}'
+  );
+
+  topics = {
+    newSolicitudCreated: false,
+  };
 
   constructor(
     private afm: AngularFireMessaging,
@@ -26,25 +31,84 @@ export class NotificationsService {
     private functions: AngularFireFunctions,
     private toastController: ToastController,
     private alertController: AlertController
-  ) {}
+  ) {
+    this.afm.getToken.subscribe((token) => this.token$.next(token));
+  }
 
-  requestPermission(user: UserInfo) {
+  async enableNotifications(user: UserInfo, claims: any) {
     this.afm.requestToken.subscribe(async (token) => {
-      await this.firestore.doc(`usuarios/${user.uid}`).update({ token });
-      this.showToast('Dispositivo autorizado');
+      // this.token = token;
+      this.token$.next(token);
+      const deviceTokens = user.deviceTokens ?? {};
+      deviceTokens[token] = true;
+      await this.firestore.doc(`usuarios/${user.uid}`).update({ deviceTokens });
+      const { xpapDepositosAutorizar } = claims;
+      if (xpapDepositosAutorizar) {
+        this.subscribeToNewSolicitudes(token);
+      }
     });
   }
 
-  deleteToken(token: string, user: UserInfo) {
-    this.afm.deleteToken(token).subscribe(async (val) => {
-      await this.firestore.doc(`usuarios/${user.uid}`).update({ token: null });
-    });
+  disableNotifications(user: UserInfo, claims: any) {
+    this.afm.getToken
+      .pipe(
+        mergeMap((token) => {
+          return this.afm
+            .deleteToken(token)
+            .pipe(map((res) => (res ? token : null)));
+        })
+      )
+      .subscribe(async (token) => {
+        if (token) {
+          this.token$.next(null);
+          console.log('Quitando token: ', token);
+          const deviceTokens = user.deviceTokens ?? {};
+          if (deviceTokens[token]) {
+            delete deviceTokens[token];
+            await this.firestore
+              .doc(`usuarios/${user.uid}`)
+              .update({ deviceTokens });
+          }
+          const { xpapDepositosAutorizar } = claims;
+          if (xpapDepositosAutorizar) {
+            this.unsubscribeToNewSolicitudes(token);
+          }
+        }
+      });
   }
 
-  subscribeToTopic(token: string, topic: string) {
+  // requestPermission(user: UserInfo) {
+  //   this.afm.requestToken.subscribe(async (token) => {
+  //     await this.firestore.doc(`usuarios/${user.uid}`).update({ token });
+  //     this.subscribeToNewSolicitudes(token);
+  //   });
+  // }
+
+  // deleteToken(token: string, user: UserInfo) {
+  //   this.afm.deleteToken(token).subscribe(async (val) => {
+  //     await this.firestore.doc(`usuarios/${user.uid}`).update({ token: null });
+  //   });
+  // }
+
+  subscribeToNewSolicitudes(token: string) {
+    this.subscribeToTopic(
+      token,
+      'newSolicitudCreated',
+      'Registrado para recibir notificaciones de nuevas solicitudes'
+    );
+  }
+
+  unsubscribeToNewSolicitudes(token: string) {
+    this.unsubscribeToTopic(token, 'newSolicitudCreated');
+  }
+
+  subscribeToTopic(token: string, topic: string, successMessage: string) {
     const callable = this.functions.httpsCallable('subscribeToTopic');
     callable({ token, topic }).subscribe(
-      (res) => this.showToast(res),
+      (res) => {
+        this.registeredTopics[topic] = true;
+        this.showToast(successMessage, 'Subscripción registrada');
+      },
       (err) => this.handleError(err)
     );
   }
@@ -52,7 +116,10 @@ export class NotificationsService {
   unsubscribeToTopic(token: string, topic: string) {
     const callable = this.functions.httpsCallable('unsubscribeToTopic');
     callable({ token, topic }).subscribe(
-      (res) => this.showToast(res),
+      (res) => {
+        this.registeredTopics[topic] = false;
+        this.showToast('Topic: ' + topic, 'Subscripción cancelada');
+      },
       (err) => this.handleError(err)
     );
   }
@@ -66,12 +133,22 @@ export class NotificationsService {
     );
   }
 
-  async showToast(message: any) {
+  sendTestTokenMessage(token: string) {
+    console.log('Mensaje de prueba a: ', token);
+    this.functions
+      .httpsCallable('sendMessageToToken')({ token })
+      .subscribe(
+        (res) => console.log('Message sent ok ', res),
+        (err) => this.handleError(err)
+      );
+  }
+
+  async showToast(message: any, header = 'Notificación') {
     const toast = await this.toastController.create({
-      header: 'Notificación',
+      header,
       message,
       color: 'warning',
-      duration: 8000,
+      duration: 6000,
       position: 'bottom',
       buttons: [
         {
@@ -85,7 +162,8 @@ export class NotificationsService {
 
   async handleError(err: any) {
     const alert = await this.alertController.create({
-      header: 'Error en Firebase',
+      header: 'Firebase error',
+      subHeader: 'FCM exception',
       message: err.message,
       mode: 'ios',
       translucent: true,

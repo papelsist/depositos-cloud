@@ -1,7 +1,7 @@
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 
 import { BehaviorSubject, Observable, timer } from 'rxjs';
-import { filter, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+import { filter, map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
 
 import { SolicitudesService } from '@papx/data-access';
 import {
@@ -58,6 +58,11 @@ export class PendientesPage extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.pendientes$ = this.service.pendientesPorAutorizar$.pipe(
+      map((rows) =>
+        rows.sort((a, b) =>
+          a.folio > b.folio ? 1 : a.folio === b.folio ? 0 : -1
+        )
+      ),
       takeUntil(this.destroy$)
     );
 

@@ -10,42 +10,47 @@ import { Autorizacion, SolicitudDeDeposito } from '@papx/models';
 @Component({
   selector: 'papx-autorizar-deposito-modal',
   template: `
-    <div class="ion-padding">
-      <ion-list-header>
-        <ion-label>
-          Autorizar
-          {{ solicitud.transferencia > 0.0 ? 'Transferencia' : 'Depósito' }}:
-          {{ solicitud.folio }}
-        </ion-label>
-        <ion-button (click)="dismissModal()">Cancelar</ion-button>
-      </ion-list-header>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title> Autorizar solicitud: {{ solicitud.folio }} </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="dismissModal()"> Cancelar </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
       <ion-list>
         <ion-item>
-          <ion-label>
-            <h2>
-              Total:
-              <ion-text color="primary">{{
-                solicitud.total | currency
-              }}</ion-text>
-            </h2>
-            <h2>
-              Banco origen:
-              <ion-text color="primary">{{ solicitud.banco.nombre }}</ion-text>
-            </h2>
-            <h2>
-              Cuenta destino:
-              <ion-text color="primary"
-                >{{ solicitud.cuenta.descripcion }} ({{
-                  solicitud.cuenta.numero
-                }})
-              </ion-text>
-            </h2>
-            <h2>
-              Fecha depósito:
-              <ion-text color="primary">{{
-                solicitud.fechaDeposito | date: 'dd/MM/yyyy'
-              }}</ion-text>
-            </h2>
+          <ion-label class="row">
+            <span>Total: </span>
+            <ion-text color="primary">{{
+              solicitud.total | currency
+            }}</ion-text>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label class="row">
+            <span>Banco origen:</span>
+            <ion-text color="primary">{{ solicitud.banco.nombre }}</ion-text>
+          </ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-label class="row">
+            <span>Cuenta destino:</span>
+            <ion-text color="primary"
+              >{{ solicitud.cuenta.descripcion }} ({{
+                solicitud.cuenta.numero
+              }})
+            </ion-text>
+          </ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-label class="row">
+            <span> Fecha depósito: </span>
+            <ion-text color="primary">{{
+              solicitud.fechaDeposito | date: 'dd/MM/yyyy'
+            }}</ion-text>
           </ion-label>
         </ion-item>
       </ion-list>
@@ -90,9 +95,16 @@ import { Autorizacion, SolicitudDeDeposito } from '@papx/models';
         <ion-icon name="checkmark-done" slot="start"></ion-icon>
         <ion-label>Autorizar</ion-label>
       </ion-button>
-    </div>
+    </ion-content>
   `,
-  styles: [``],
+  styles: [
+    `
+      .row {
+        display: flex;
+        justify-content: space-between;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AutorizarModalComponent implements OnInit {
@@ -101,7 +113,7 @@ export class AutorizarModalComponent implements OnInit {
   constructor(private modal: PopoverController) {}
 
   ngOnInit() {
-    console.log('Posible: ', this.posibleDuplicado);
+    // console.log('Posible: ', this.posibleDuplicado);
   }
 
   dismissModal() {

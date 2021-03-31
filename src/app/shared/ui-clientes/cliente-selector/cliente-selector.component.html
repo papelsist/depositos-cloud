@@ -1,9 +1,6 @@
 <ion-header translucent="true">
   <ion-toolbar>
-    <ion-title>
-      Catálogo de clientes
-      {{ tipo === 'CREDITO' ? 'de crédito' : '' }}</ion-title
-    >
+    <ion-title> Catálogo de clientes</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
@@ -12,7 +9,7 @@
       #search
       showCancelButton="focus"
       animated
-      [placeholder]="placeholder"
+      placeholder="Buscar por nombre/clave/rfc"
       color="tertiary"
       (ionChange)="onSearch($event)"
       (ionCancel)="close()"

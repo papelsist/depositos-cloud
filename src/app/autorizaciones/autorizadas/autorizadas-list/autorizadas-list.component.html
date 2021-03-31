@@ -1,5 +1,8 @@
 <ion-list class="ion-no-padding">
   <ion-item *ngFor="let sol of solicitudes" button [routerLink]="sol.id">
+    <ion-chip slot="start">
+      {{ sol.folio }}
+    </ion-chip>
     <ion-label>
       <div class="row">
         <span>
@@ -17,13 +20,11 @@
           Autorizó: {{ sol.autorizacion.createUser }} ({{
             sol.autorizacion.fecha.toDate() | date: 'dd/MM/yyyy: hh:MM'
           }})
-          <span>Rep: {{ sol.autorizacion.replicado }}</span>
+          {{ autorizadoDesde(sol) }}
         </span>
       </p>
     </ion-label>
-    <ion-chip slot="start">
-      {{ sol.folio }}
-    </ion-chip>
+
     <ion-chip slot="end" color="warning">
       {{ sol.sucursal }}
     </ion-chip>

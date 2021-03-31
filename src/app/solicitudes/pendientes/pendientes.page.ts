@@ -46,6 +46,11 @@ export class PendientesPage extends BaseComponent implements OnInit {
       filtrar
         ? this.service.findPendientesByUser(user.uid)
         : this.service.findPendientesBySucursal(user.sucursal)
+    ),
+    map((rows) =>
+      rows.sort((a, b) =>
+        a.folio > b.folio ? 1 : a.folio === b.folio ? 0 : -1
+      )
     )
   );
 

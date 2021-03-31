@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 
+import { AngularFireMessaging } from '@angular/fire/messaging';
+
 import { AuthService } from './@auth/auth.service';
 import { Router } from '@angular/router';
 import { DisplayModeService } from './core/display-mode.service';
@@ -18,7 +20,8 @@ export class AppComponent implements OnInit {
     private platform: Platform,
     private authService: AuthService,
     private router: Router,
-    private displayService: DisplayModeService
+    private displayService: DisplayModeService,
+    private afm: AngularFireMessaging
   ) {
     this.initializeApp();
   }
@@ -29,6 +32,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // this.logSecurityState();
+    this.afm.messages.subscribe((msg) => console.log('Message: ', msg));
   }
 
   /**

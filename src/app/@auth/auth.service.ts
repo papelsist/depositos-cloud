@@ -24,23 +24,19 @@ export class AuthService {
 
   readonly user$ = this.auth.user;
 
-  readonly currentUser$ = this.auth.user.pipe(
-    map((user) => (user ? mapUser(user) : null)),
-    take(1),
-    shareReplay()
+  readonly currentUser$ = this.auth.authState.pipe(
+    map((user) => (user ? mapUser(user) : null))
   );
 
   readonly claims$ = this.auth.idTokenResult.pipe(
-    map((res) => (res ? res.claims : {})),
-    take(1),
-    shareReplay()
+    map((res) => (res ? res.claims : {}))
   );
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => {
+      // return user ? this.getUser(user.uid) : of(null);
       return user ? this.getUserByEmail(user.email) : of(null);
     }),
-    shareReplay(),
     catchError((err) => throwError(err))
   );
 
@@ -125,6 +121,10 @@ export class AuthService {
     );
   }
 
+  getUser(uid: string) {
+    return this.firestore.doc<UserInfo>(`users/${uid}`).valueChanges();
+  }
+
   getUserByUid(uid: string): Observable<UserInfo | null> {
     return this.firestore
       .collection<UserInfo>('users', (ref) => {
@@ -147,5 +147,12 @@ export class AuthService {
         map((users) => (users.length > 0 ? users[0] : null)),
         catchError((err) => throwError(err))
       );
+  }
+
+  async updateSucursal(user: UserInfo, sucursal: string) {
+    await this.firestore
+      .collection('usuarios')
+      .doc(user.uid)
+      .update({ sucursal });
   }
 }

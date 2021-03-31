@@ -16,6 +16,7 @@ export interface UserInfo extends User {
   nombre: string;
   numeroDeEmpleado?: number;
   puesto: string;
-  roles: string[];
-  sucursal: string;
+  roles?: string[];
+  sucursal?: string;
+  deviceTokens?: { [key: string]: boolean };
 }

@@ -23,7 +23,7 @@ export class SolicitudesService {
 
   pendientesPorAutorizar$ = this.afs
     .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
-      ref.where('status', '==', 'PENDIENTE')
+      ref.where('status', '==', 'PENDIENTE').limit(20)
     )
     .valueChanges({ idField: 'id' })
     .pipe(shareReplay());
@@ -76,9 +76,9 @@ export class SolicitudesService {
     try {
       const payload = {
         ...solicitud,
-        fecha: new Date().toISOString(),
         uid: user.uid,
         createUser: user.displayName,
+        fecha: new Date().toISOString(),
         dateCreated: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
         appVersion: 2,
@@ -88,10 +88,6 @@ export class SolicitudesService {
       let folio = 1;
 
       const solicitudRef = this.afs.collection(this.COLLECTION).doc().ref;
-
-      // Stats Data
-      const statsRef = this.afs.collection(this.COLLECTION).doc('--stats--')
-        .ref;
 
       return this.afs.firestore.runTransaction(async (transaction) => {
         const folioDoc = await transaction.get<any>(folioRef);
@@ -103,18 +99,9 @@ export class SolicitudesService {
         folios[SUCURSAL] += 1;
         folio = folios[SUCURSAL];
 
-        const acumulados: { [key: string]: any } = {};
-        acumulados[SUCURSAL] = {
-          pendientes: {
-            count: firebase.firestore.FieldValue.increment(1),
-            total: firebase.firestore.FieldValue.increment(solicitud.total),
-          },
-        };
-
         transaction
           .set(folioRef, folios, { merge: true })
-          .set(solicitudRef, { ...payload, folio })
-          .set(statsRef, acumulados, { merge: true });
+          .set(solicitudRef, { ...payload, folio });
         return folio;
       });
     } catch (error: any) {

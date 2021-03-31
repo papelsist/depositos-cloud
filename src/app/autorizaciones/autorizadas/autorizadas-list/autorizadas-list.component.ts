@@ -4,6 +4,15 @@ import {
   Input,
   OnInit,
 } from '@angular/core';
+
+import {
+  formatDistanceToNowStrict,
+  parseISO,
+  differenceInHours,
+  addBusinessDays,
+} from 'date-fns';
+import { es } from 'date-fns/locale';
+
 import { SolicitudDeDeposito } from '@papx/models';
 
 @Component({
@@ -17,4 +26,12 @@ export class AutorizadasListComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  autorizadoDesde(sol: SolicitudDeDeposito) {
+    let fecha = sol.autorizacion.fecha.toDate();
+    return formatDistanceToNowStrict(fecha, {
+      addSuffix: true,
+      locale: es,
+    });
+  }
 }
