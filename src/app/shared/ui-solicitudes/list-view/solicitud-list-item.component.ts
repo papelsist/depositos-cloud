@@ -41,6 +41,17 @@ import { ModalController } from '@ionic/angular';
               <ion-text [color]="importeColor">
                 <h2>{{ sol.total | currency }}</h2>
               </ion-text>
+              <p>
+                <small>
+                  {{
+                    sol.transferencia > 0
+                      ? 'TRS'
+                      : sol.cheque > 0
+                      ? 'CHEQUE'
+                      : 'EFECTIVO'
+                  }}
+                </small>
+              </p>
             </ion-col>
 
             <!-- 2 Banos -->
@@ -64,11 +75,12 @@ import { ModalController } from '@ionic/angular';
               <h5 class="retraso">
                 Act: {{ sol.lastUpdated | date: 'dd/MM/yyyy : HH:mm' }}
               </h5>
-              <p>
+              <p>Referencia: {{ sol.referencia }}</p>
+              <!-- <p>
                 <ion-text [color]="retrasoColor">
                   {{ retraso }}
                 </ion-text>
-              </p>
+              </p> -->
             </ion-col>
 
             <!-- 4 Cliente -->
@@ -95,6 +107,17 @@ import { ModalController } from '@ionic/angular';
             </ion-col>
           </ion-row>
         </ion-grid>
+        <p class="ion-text-wrap ion-hide-md-up">
+          <span class="solicita"> Solicita: {{ sol.solicita }} </span>
+          <span class="sucursal">
+            <ion-text color="warning">
+              ({{ sol.callcenter ? 'CALLCENTER' : sol.sucursal }} )
+            </ion-text>
+          </span>
+        </p>
+        <p class="ion-text-wrap ion-hide-md-up">
+          Cliente: {{ sol.cliente.nombre }}
+        </p>
       </ion-label>
       <!-- <ion-icon
         slot="start"

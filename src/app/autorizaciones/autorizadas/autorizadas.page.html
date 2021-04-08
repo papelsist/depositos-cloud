@@ -4,12 +4,21 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Autorizadas</ion-title>
+    <ion-buttons slot="end">
+      <papx-solicitudes-filter
+        [filter]="filter"
+        (search)="onSearch($event)"
+      ></papx-solicitudes-filter>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
   <!-- <ion-toolbar>
-    <ion-searchbar placeholder="Buscar"></ion-searchbar>
+    <ion-searchbar
+      placeholder="Buscar"
+      (ionChange)="onFilter($event)"
+    ></ion-searchbar>
   </ion-toolbar> -->
   <papx-solicitudes-autorizadas-list
     [solicitudes]="autorizadas$ | async"

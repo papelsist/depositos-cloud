@@ -20,6 +20,6 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.user$.subscribe((u) => console.log(u));
+    // this.user$.subscribe((u) => console.log(u));
   }
 }

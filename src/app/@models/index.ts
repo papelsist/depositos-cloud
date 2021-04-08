@@ -10,3 +10,4 @@ export * from './cliente';
 export * from './cartera';
 export * from './sucursal';
 export * from './autorizacion';
+export * from './dtos';

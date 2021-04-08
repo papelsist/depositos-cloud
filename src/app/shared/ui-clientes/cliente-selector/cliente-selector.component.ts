@@ -10,8 +10,15 @@ import { ModalController } from '@ionic/angular';
 import { Cliente } from '@papx/models';
 import { ClientesService } from '@papx/data-access';
 
-import { BehaviorSubject, combineLatest, from, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, from, Observable, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  map,
+  filter as xfilter,
+  switchMap,
+  catchError,
+} from 'rxjs/operators';
 
 @Component({
   selector: 'papelx-cliente-selector',
@@ -21,7 +28,8 @@ import { map } from 'rxjs/operators';
 })
 export class ClienteSelectorComponent implements OnInit {
   filter$ = new BehaviorSubject('');
-  clientes$: Observable<Partial<Cliente>[]>;
+  // clientes$: Observable<Partial<Cliente>[]>;
+  clientes$;
 
   constructor(
     private modalCtrl: ModalController,
@@ -30,7 +38,27 @@ export class ClienteSelectorComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.clientes$ = from([]);
+    this.clientes$ = this.filter$.pipe(
+      map((term) => term.toUpperCase()),
+      debounceTime(100),
+      distinctUntilChanged(),
+      xfilter((term) => term.length > 2),
+      switchMap((term) => this.lookUp(term)),
+      catchError((err) => this.handleError(err))
+    );
+  }
+
+  lookUp(value: string) {
+    return this.service.clientesCache$.pipe(
+      map((rows) =>
+        // filter(rows, (item) =>
+        //   includes(item.nombre.toLowerCase(), value.toLowerCase())
+        // )
+        rows.filter((item) =>
+          item.nombre.toLowerCase().includes(value.toLowerCase())
+        )
+      )
+    );
   }
 
   close() {
@@ -47,5 +75,10 @@ export class ClienteSelectorComponent implements OnInit {
 
   onSearAll(term: string) {
     this.clientes$ = this.service.searchClientes(term, 5);
+  }
+
+  handleError(err: any) {
+    console.error('Error buscando clientes, ', err);
+    return of([]);
   }
 }

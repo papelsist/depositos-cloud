@@ -17,7 +17,7 @@ import { SolicitudDeDeposito } from '@papx/models';
     </ion-header>
     <ion-content class="ion-padding">
       <papx-solicitud-card [solicitud]="solicitud">
-        <ion-toolbar>
+        <ion-toolbar *ngIf="solicitud.sucursal === 'OFICINAS'">
           <ion-buttons slot="start">
             <ion-button color="success" (click)="autorizar(solicitud)">
               <ion-label>Autorizar </ion-label>

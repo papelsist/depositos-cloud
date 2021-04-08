@@ -27,12 +27,8 @@ export class AurorizadaPage implements OnInit {
     });
     this.solicitud$ = this.route.paramMap.pipe(
       map((params) => params.get('id')),
-      switchMap((id) =>
-        this.service.autorizadas$.pipe(
-          map((rows) => rows.find((item) => item.id === id))
-        )
-      ),
-      // take(1),
+      switchMap((id) => this.service.get(id)),
+      take(1),
       shareReplay(),
       finalize(() => console.log('Stop loading indicator....'))
     );

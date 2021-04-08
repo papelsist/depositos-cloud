@@ -77,11 +77,12 @@ import { SolicitudDeDeposito } from '@papx/models';
 })
 export class RechazarModalComponent implements OnInit {
   form = new FormGroup({
-    motivo: new FormControl('CHECAR_BANCO', Validators.required),
+    motivo: new FormControl('CHECAR_DATOS', Validators.required),
     comentario: new FormControl(null),
   });
   @Input() solicitud: SolicitudDeDeposito;
   @Input() motivos: string[] = [
+    'CHECAR_DATOS',
     'CHECAR_BANCO',
     'CHECAR_CUENTA',
     'CHECAR_FECHA',

@@ -8,20 +8,30 @@
         <span>
           {{ sol.total | currency }}
           <ion-text color="success">
-            <small> ({{ sol.transferencia > 0 ? 'TRS' : 'DEP' }}) </small>
+            <small>
+              ({{
+                sol.transferencia > 0
+                  ? 'TRS'
+                  : sol.cheque > 0
+                  ? 'CHEQUE'
+                  : 'EFECTIVO'
+              }})
+            </small>
           </ion-text>
         </span>
         <span>{{ sol.banco.nombre }}</span>
         <span>{{ sol.cuenta.descripcion }} ({{ sol.cuenta.numero }})</span>
-        <span>Fecha: {{ sol.fechaDeposito | date: 'dd/MM/yyyy' }}</span>
+        <span
+          >Fecha depósito: {{ sol.fechaDeposito | date: 'dd/MM/yyyy' }}</span
+        >
       </div>
       <p class="row">
         <span *ngIf="sol.autorizacion">
           Autorizó: {{ sol.autorizacion.createUser }} ({{
             sol.autorizacion.fecha.toDate() | date: 'dd/MM/yyyy: hh:MM'
           }})
-          {{ autorizadoDesde(sol) }}
         </span>
+        <span> Referencia: {{ sol.referencia }} </span>
       </p>
     </ion-label>
 

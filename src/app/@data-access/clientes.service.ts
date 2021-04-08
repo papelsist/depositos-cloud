@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { combineLatest, Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay, switchMap, take } from 'rxjs/operators';
 
-import { Cliente } from '@papx/models';
+import { Cliente, ClienteDto } from '@papx/models';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 
@@ -16,6 +16,8 @@ export class ClientesService {
     shareReplay(),
     catchError((error: any) => throwError(error))
   );
+
+  clientesCache$ = this.fetchClientesCache().pipe(shareReplay());
 
   // repository$: Observable<{ [key: string]: ClienteDto }> = this.clientes$.pipe(
   //   map((cliente) => keyBy(cliente, 'id'))
@@ -30,6 +32,31 @@ export class ClientesService {
   // findById(id: string): Observable<Cliente> {
   //   return this.repository$.pipe(map((directory) => directory[id]));
   // }
+
+  fetchClientesCache(): Observable<ClienteDto[]> {
+    const ref = this.fs.ref('catalogos/ctes-all.json');
+    return ref.getDownloadURL().pipe(
+      switchMap((url) =>
+        this.http.get<any[]>(url).pipe(
+          map((rows) =>
+            rows.map((i) => {
+              const res: ClienteDto = {
+                id: i.i,
+                nombre: i.n,
+                rfc: i.r,
+                clave: i.cv,
+                credito: !!i.cr,
+              };
+              return res;
+            })
+          ),
+          catchError((err) =>
+            throwError('Error descargando clientes ', err.message)
+          )
+        )
+      )
+    );
+  }
 
   fetchClientesCredito(): Observable<Partial<Cliente>[]> {
     return this.fs

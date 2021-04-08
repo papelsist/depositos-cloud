@@ -5,13 +5,8 @@ import {
   OnInit,
 } from '@angular/core';
 
-import {
-  formatDistanceToNowStrict,
-  parseISO,
-  differenceInHours,
-  addBusinessDays,
-} from 'date-fns';
-import { es } from 'date-fns/locale';
+import { formatDistanceToNowStrict } from 'date-fns';
+import es from 'date-fns/locale/es';
 
 import { SolicitudDeDeposito } from '@papx/models';
 

@@ -39,3 +39,19 @@ export interface UpdateSolicitud {
   id: string;
   changes: Partial<SolicitudDeDeposito>;
 }
+
+export namespace Depositos {
+  export type Roles =
+    | 'xpapDepositosAdmin'
+    | 'xpapDepositosAutorizar'
+    | 'xpapDepositosCrear'
+    | 'xpapDepositosLeer';
+
+  export const RolesMap = {
+    xpapDepositosAdmin: 'Administrador',
+    xpapDepositosAutorizar: 'Autorizar depósitos',
+    xpapDepositosCrear: 'Generar solicitudes',
+    xpapDepositosLeer: 'Consultar solicitudes',
+    xpapDepositosAutorizadosLeer: 'Consultar depositos autorizados',
+  };
+}

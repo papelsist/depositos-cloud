@@ -1,7 +1,9 @@
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 
-import { BehaviorSubject, Observable, timer } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, timer } from 'rxjs';
 import { filter, map, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
+
+import { groupBy, mapValues, sumBy } from 'lodash-es';
 
 import { SolicitudesService } from '@papx/data-access';
 import {
@@ -23,6 +25,7 @@ import { AuthService } from '@papx/auth';
 
 import { SolicitudPendienteModalComponent } from './pendiente-modal/pendiente-modal.component';
 import { RechazarModalComponent } from './rechazar-modal/rechazar-modal.component';
+import { CatalogosService } from 'src/app/@data-access/services/catalogos.service';
 
 @Component({
   selector: 'app-pendientes',
@@ -45,8 +48,16 @@ export class PendientesPage extends BaseComponent implements OnInit {
   );
   config: { view: 'cards' | 'list'; filtrar: string } = this.loadConfig();
 
+  sucursales = this.catalogoService.sucursales.sort((a1, b1) =>
+    a1.sort > b1.sort ? 1 : a1.sort === b1.sort ? 0 : -1
+  );
+
+  sucursal$ = new BehaviorSubject('OFICINAS');
+  porSucursal$;
+
   constructor(
     private service: SolicitudesService,
+    private catalogoService: CatalogosService,
     private auth: AuthService,
     private modal: ModalController,
     private alertController: AlertController,
@@ -57,13 +68,22 @@ export class PendientesPage extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.pendientes$ = this.service.pendientesPorAutorizar$.pipe(
-      map((rows) =>
-        rows.sort((a, b) =>
-          a.folio > b.folio ? 1 : a.folio === b.folio ? 0 : -1
-        )
-      ),
-      takeUntil(this.destroy$)
+    this.pendientes$ = combineLatest([
+      this.service.pendientesPorAutorizar$,
+      this.sucursal$,
+    ]).pipe(
+      map(([rows, sucursal]) => {
+        return rows
+          .sort((a, b) =>
+            a.folio > b.folio ? 1 : a.folio === b.folio ? 0 : -1
+          )
+          .filter((item) => item.sucursal === sucursal);
+      })
+    );
+
+    this.porSucursal$ = this.service.pendientesPorAutorizar$.pipe(
+      map((rows) => groupBy(rows, 'sucursal')),
+      map((grupos) => mapValues(grupos, (o) => o.length))
     );
 
     this.timer$.subscribe(
@@ -88,6 +108,10 @@ export class PendientesPage extends BaseComponent implements OnInit {
    */
   ionViewDidLeave() {
     this._pauseResume$.next(false);
+  }
+
+  segmentChanged({ detail: { value } }: any) {
+    this.sucursal$.next(value);
   }
 
   async onSelection(solicitud: Partial<SolicitudDeDeposito>, user: User) {

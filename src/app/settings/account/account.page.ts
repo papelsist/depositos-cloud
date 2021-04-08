@@ -2,7 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from '@papx/auth';
 import { UserInfo } from '@papx/models';
+import { map } from 'rxjs/operators';
+
 import { CatalogosService } from 'src/app/@data-access/services/catalogos.service';
+import { Depositos } from '@papx/models';
+import pickBy from 'lodash-es/pickBy';
 
 @Component({
   selector: 'app-account',
@@ -11,6 +15,11 @@ import { CatalogosService } from 'src/app/@data-access/services/catalogos.servic
 })
 export class AccountPage {
   user$ = this.service.userInfo$;
+  claims$ = this.service.claims$.pipe(
+    map((claim) =>
+      pickBy(claim, (value, key) => key.startsWith('xpapDepositos') && value)
+    )
+  );
   constructor(
     private service: AuthService,
     private alertController: AlertController,
@@ -52,5 +61,10 @@ export class AccountPage {
 
   updateSucursal(user: UserInfo, sucursal: string) {
     this.service.updateSucursal(user, sucursal);
+  }
+
+  getRoleLabel(role: string) {
+    const res = Depositos.RolesMap[role];
+    return res ?? role;
   }
 }

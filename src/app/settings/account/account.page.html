@@ -74,5 +74,24 @@
         </div>
       </ion-col>
     </ion-row>
+    <ion-row>
+      <ion-col size-sm="12" size-md="6" offset-md="3" size-lg="4" offset-lg="4">
+        <ion-list *ngIf="claims$ | async as claims ">
+          <ion-list-header color="warning">
+            <ion-label>Derechos</ion-label>
+          </ion-list-header>
+          <ion-item *ngFor="let item of claims | keyvalue">
+            <ion-label class="ion-text-wrap">
+              {{getRoleLabel(item.key)}}
+            </ion-label>
+            <!-- <ion-checkbox [checked]="item.value" ></ion-checkbox> -->
+            <ion-icon
+              [name]="item.value ? 'checkmark' : 'close' "
+              color="primary"
+            ></ion-icon>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>

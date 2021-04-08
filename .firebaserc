@@ -11,6 +11,13 @@
           "papel-depositos"
         ]
       }
+    },
+    "papx-ws-prod": {
+      "hosting": {
+        "app": [
+          "papws-depositos"
+        ]
+      }
     }
   }
 }

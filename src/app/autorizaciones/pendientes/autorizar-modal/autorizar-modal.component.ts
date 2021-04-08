@@ -53,6 +53,13 @@ import { Autorizacion, SolicitudDeDeposito } from '@papx/models';
             }}</ion-text>
           </ion-label>
         </ion-item>
+
+        <ion-item>
+          <ion-label class="row">
+            <span> Referencia: </span>
+            <ion-text color="primary">{{ solicitud.referencia }}</ion-text>
+          </ion-label>
+        </ion-item>
       </ion-list>
       <div class="duplicado-panel " *ngIf="posibleDuplicado as duplicado">
         <ion-list>

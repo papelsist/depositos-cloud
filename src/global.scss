@@ -53,3 +53,8 @@ ion-popover.solicitud-autorizar-popover {
   box-shadow: -8px 0 16px rgba(0, 0, 0, 0.12);
   border-radius: 0;
 }
+
+.solicitudes-filter-modal {
+  --max-width: 450px;
+  --max-height: 300px;
+}

@@ -9,6 +9,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay, take } from 'rxjs/operators';
 
 import { isSameDay, parseJSON } from 'date-fns';
+import toNumber from 'lodash-es/toNumber';
 
 import {
   SolicitudDeDeposito,
@@ -35,7 +36,10 @@ export class SolicitudesService {
 
   autorizadas$ = this.afs
     .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
-      ref.where('status', '==', 'AUTORIZADO').limit(20)
+      ref
+        .where('status', '==', 'AUTORIZADO')
+        .orderBy('autorizacion.fecha', 'desc')
+        .limit(5)
     )
     .snapshotChanges()
     .pipe(
@@ -46,8 +50,8 @@ export class SolicitudesService {
           const res: SolicitudDeDeposito = { id, ...data };
           return res;
         })
-      ),
-      shareReplay()
+      )
+      // shareReplay()
     );
   // .valueChanges({ idField: 'id' })
   // .pipe(shareReplay());
@@ -236,5 +240,31 @@ export class SolicitudesService {
         catchError((err) => throwError(err))
       )
       .toPromise();
+  }
+
+  buscarAutorizadas(filtro: any) {
+    return this.afs
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
+        let query = ref.where('status', '==', 'AUTORIZADO');
+        // .where('sucursal', '==', 'OFICINAS');
+        if (filtro.importeInicial) {
+          query = query.where('total', '>=', toNumber(filtro.importeInicial));
+        }
+        if (filtro.importeFinal) {
+          query = query.where('total', '<=', toNumber(filtro.importeFinal));
+        }
+        return query.limit(10);
+      })
+      .snapshotChanges()
+      .pipe(
+        map((actions) =>
+          actions.map((a) => {
+            const data = a.payload.doc.data();
+            const id = a.payload.doc.id;
+            const res: SolicitudDeDeposito = { id, ...data };
+            return res;
+          })
+        )
+      );
   }
 }
