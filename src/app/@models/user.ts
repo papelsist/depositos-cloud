@@ -18,5 +18,6 @@ export interface UserInfo extends User {
   puesto: string;
   roles?: string[];
   sucursal?: string;
+  token?: string;
   deviceTokens?: { [key: string]: boolean };
 }

@@ -27,14 +27,13 @@
           [color]="vm.token ? 'success' : ''"
         ></ion-icon>
         <ion-button
-          *ngIf="!vm.token"
           slot="end"
           fill="clear"
           (click)="autorizarNotificaciones(vm)"
         >
           Autorizar
         </ion-button>
-        <ion-button
+        <!-- <ion-button
           *ngIf="vm.token"
           slot="end"
           fill="clear"
@@ -42,7 +41,7 @@
           (click)="cancelarNotificaciones(vm)"
         >
           Cancelar
-        </ion-button>
+        </ion-button> -->
       </ion-item>
       <ion-item-options>
         <ion-item-option
@@ -60,7 +59,7 @@
       <ion-icon name="cog" slot="start"></ion-icon>
     </ion-item>
     <ion-item>
-      <ion-label>Versión : 1.0.15 </ion-label>
+      <ion-label>Versión : 1.0.16 </ion-label>
       <ion-icon name="code-working" slot="start"></ion-icon>
     </ion-item>
     <!-- <ion-item *ngIf="vm$ | async as vm">

@@ -37,11 +37,10 @@ export class NotificationsService {
 
   async enableNotifications(user: UserInfo, claims: any) {
     this.afm.requestToken.subscribe(async (token) => {
-      // this.token = token;
       this.token$.next(token);
-      const deviceTokens = user.deviceTokens ?? {};
-      deviceTokens[token] = true;
-      await this.firestore.doc(`usuarios/${user.uid}`).update({ deviceTokens });
+      // const deviceTokens = user.deviceTokens ?? {};
+      // deviceTokens[token] = true;
+      await this.firestore.doc(`usuarios/${user.uid}`).update({ token });
       const { xpapDepositosAutorizar } = claims;
       if (xpapDepositosAutorizar) {
         this.subscribeToNewSolicitudes(token);
@@ -61,14 +60,14 @@ export class NotificationsService {
       .subscribe(async (token) => {
         if (token) {
           this.token$.next(null);
-          console.log('Quitando token: ', token);
-          const deviceTokens = user.deviceTokens ?? {};
-          if (deviceTokens[token]) {
-            delete deviceTokens[token];
-            await this.firestore
-              .doc(`usuarios/${user.uid}`)
-              .update({ deviceTokens });
-          }
+          // console.log('Quitando token: ', token);
+          // const deviceTokens = user.deviceTokens ?? {};
+          // if (deviceTokens[token]) {
+          //   delete deviceTokens[token];
+          //   await this.firestore
+          //     .doc(`usuarios/${user.uid}`)
+          //     .update({ deviceTokens });
+          // }
           const { xpapDepositosAutorizar } = claims;
           if (xpapDepositosAutorizar) {
             this.unsubscribeToNewSolicitudes(token);
@@ -76,19 +75,6 @@ export class NotificationsService {
         }
       });
   }
-
-  // requestPermission(user: UserInfo) {
-  //   this.afm.requestToken.subscribe(async (token) => {
-  //     await this.firestore.doc(`usuarios/${user.uid}`).update({ token });
-  //     this.subscribeToNewSolicitudes(token);
-  //   });
-  // }
-
-  // deleteToken(token: string, user: UserInfo) {
-  //   this.afm.deleteToken(token).subscribe(async (val) => {
-  //     await this.firestore.doc(`usuarios/${user.uid}`).update({ token: null });
-  //   });
-  // }
 
   subscribeToNewSolicitudes(token: string) {
     this.subscribeToTopic(
@@ -106,10 +92,20 @@ export class NotificationsService {
     const callable = this.functions.httpsCallable('subscribeToTopic');
     callable({ token, topic }).subscribe(
       (res) => {
+        console.log('Subscripcion  del token %s al topic: %s', token, topic);
         this.registeredTopics[topic] = true;
         this.showToast(successMessage, 'Subscripción registrada');
       },
-      (err) => this.handleError(err)
+      (err) => {
+        console.error(err);
+        console.error(
+          'Error suscribiendo el token %s al topic: %s',
+          token,
+          topic
+        );
+
+        this.handleError(err);
+      }
     );
   }
 

@@ -32,7 +32,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // this.logSecurityState();
-    this.afm.messages.subscribe((msg) => console.log('Message: ', msg));
+    this.afm.messages.subscribe((msg) =>
+      console.log('Message from FCM: ', msg)
+    );
   }
 
   /**

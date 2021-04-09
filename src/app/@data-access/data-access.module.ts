@@ -22,6 +22,7 @@ import {
   USE_EMULATOR as USE_FUNCTIONS_EMULATOR,
   ORIGIN as FUNCTIONS_ORIGIN,
   NEW_ORIGIN_BEHAVIOR,
+  REGION,
 } from '@angular/fire/functions';
 
 import { AngularFireStorageModule, BUCKET } from '@angular/fire/storage';
@@ -74,12 +75,13 @@ export function initializeApp1(afa: AngularFireAuth): any {
       provide: USE_FUNCTIONS_EMULATOR,
       useValue: environment.useEmulators ? ['localhost', 5001] : undefined,
     },
-    { provide: NEW_ORIGIN_BEHAVIOR, useValue: true },
-    {
-      provide: FUNCTIONS_ORIGIN,
-      useFactory: () => (isDevMode() ? undefined : location.origin),
-    },
-    { provide: BUCKET, useValue: 'papx-ws-prod.appspot.com' },
+    // { provide: NEW_ORIGIN_BEHAVIOR, useValue: true },
+    // {
+    //   provide: FUNCTIONS_ORIGIN,
+    //   useFactory: () => (isDevMode() ? undefined : location.origin),
+    // },
+    { provide: BUCKET, useValue: environment.firebaseConfig.storageBucket },
+    { provide: REGION, useValue: 'us-central1' },
     /* Delay the app initialization process by 100ms*/
     {
       provide: APP_INITIALIZER,

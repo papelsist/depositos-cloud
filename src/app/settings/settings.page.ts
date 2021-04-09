@@ -26,7 +26,6 @@ export class SettingsPage implements OnInit {
   ngOnInit() {}
 
   autorizarNotificaciones(config: any) {
-    console.log('Autorizando config: ', config);
     const { user, claims } = config;
     this.notificationService.enableNotifications(user, claims);
   }
