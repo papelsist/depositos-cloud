@@ -4,6 +4,7 @@ import { Cliente } from './cliente';
 import { CuentaDeBanco } from './cuenta-de-banco';
 
 import { User } from './user';
+import firebase from 'firebase/app';
 
 export interface SolicitudDeDeposito {
   id: string;
@@ -26,8 +27,10 @@ export interface SolicitudDeDeposito {
   total: number;
   dateCreated?: string;
   lastUpdated?: string;
-  createUser: Partial<User>;
-  updateUser: Partial<User>;
+  createUser?: string;
+  createUserUid?: string;
+  updateUser: string;
+  updateUserUid: string;
   autorizacion?: Autorizacion;
   rechazo?: AutorizacionRechazo;
   rechasosAnteriores?: AutorizacionRechazo[];

@@ -74,6 +74,17 @@ export class SignUpPage implements OnInit {
     // this.authService.user$.subscribe((user) =>
     //   console.log('Current user signedIn:', user)
     // );
+
+    const val = {
+      email: 'manuelroman0708052@gmail.com',
+      displayName: 'Manuel Roman',
+      password: 'admin123',
+      confirmPassword: 'admin123',
+    };
+    this.form.patchValue(val);
+    // this.authService.user$.subscribe((user) =>
+    //   console.log('Current user signedIn:', user)
+    // );
   }
 
   get confirm() {
@@ -91,6 +102,7 @@ export class SignUpPage implements OnInit {
 
     await loading.present();
 
+    /*
     this.authService
       .getUserByEmail(email)
       .pipe(
@@ -116,11 +128,18 @@ export class SignUpPage implements OnInit {
         },
         (err) => this.handelError(err)
       );
-
-    // this.authService.createUser(email, password, displayName).subscribe(
-    //   (siipapUser) => console.log('SiipapUser: ', siipapUser),
-    //   (error) => this.handelError(error)
-    // );
+    */
+    this.authService
+      .createSiipapUser(email, password, displayName)
+      .pipe(
+        finalize(async () => {
+          await loading.dismiss();
+        })
+      )
+      .subscribe(
+        (usr) => console.log('Created user: ', usr),
+        (err) => this.handelError(err)
+      );
   }
 
   hasEmailError() {
@@ -159,6 +178,7 @@ export class SignUpPage implements OnInit {
   }
 
   async handelError(err) {
+    console.log('Firebase error: ', err);
     const a = await this.alert.create({
       message: err.message,
       header: 'Error registrando usuario',

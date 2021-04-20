@@ -9,7 +9,10 @@
         <span class="sucursal">({{vm.sucursal}})</span>
       </ion-title>
       <ion-buttons slot="end">
-        <papx-cartera-selector [(cartera)]="cartera"></papx-cartera-selector>
+        <papx-cartera-selector
+          [(cartera)]="cartera"
+          *ngIf="modificarCartera"
+        ></papx-cartera-selector>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>

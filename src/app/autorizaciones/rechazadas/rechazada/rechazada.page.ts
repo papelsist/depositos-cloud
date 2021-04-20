@@ -18,13 +18,11 @@ export class RechazadaPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    console.log('Inicializando rechazada...');
     this.loadSolicitud();
   }
 
   private loadSolicitud() {
     this.route.paramMap.subscribe((params) => {
-      console.log('Params: ', params);
       const id = params.get('id');
     });
     this.solicitud$ = this.route.paramMap.pipe(

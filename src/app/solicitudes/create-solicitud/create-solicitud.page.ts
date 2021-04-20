@@ -1,5 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { AlertController } from '@ionic/angular';
+
+import { combineLatest } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
 import {
   Cartera,
@@ -8,12 +13,7 @@ import {
   User,
 } from '@papx/models';
 import { SolicitudesService } from '@papx/data-access';
-import { Router } from '@angular/router';
-import { combineLatest, Observable } from 'rxjs';
 import { AuthService } from '@papx/auth';
-import { AlertController } from '@ionic/angular';
-import { UserInfo } from '@papx/models';
-import { map, take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-solicitud',
@@ -22,6 +22,7 @@ import { map, take } from 'rxjs/operators';
 })
 export class CreateSolicitudPage implements OnInit {
   cartera: Cartera = 'CON';
+  modificarCartera = false;
 
   vm$ = combineLatest([this.auth.userInfo$, this.auth.claims$]).pipe(
     map(([user, claims]) => ({
@@ -41,16 +42,15 @@ export class CreateSolicitudPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.vm$
-      .pipe(take(1))
-      .subscribe((vm) => (this.cartera = vm.cartera as Cartera));
+    this.vm$.pipe(take(1)).subscribe((vm) => {
+      this.modificarCartera = !!vm.claims.xpapDepositosCredito;
+      this.cartera = vm.cartera as Cartera;
+    });
   }
 
   async onSave(sol: Partial<SolicitudDeDeposito>, user: User) {
     try {
       sol.tipo = this.cartera;
-      console.log('Crear solicitud: ', sol);
-      // console.log('User: ', user);
       const fol = await this.service.createSolicitud(sol, user);
       this.router.navigate(['solicitudes']);
     } catch (error) {

@@ -77,17 +77,19 @@ export class SolicitudesService {
   ) {}
 
   async createSolicitud(solicitud: Partial<SolicitudDeDeposito>, user: User) {
+    const { uid, displayName } = user;
     try {
-      const payload = {
+      const payload: Partial<SolicitudDeDeposito> = {
         ...solicitud,
-        uid: user.uid,
-        createUser: user.displayName,
         fecha: new Date().toISOString(),
+        createUser: displayName,
+        createUserUid: uid,
+        updateUser: displayName,
+        updateUserUid: uid,
         dateCreated: new Date().toISOString(),
         lastUpdated: new Date().toISOString(),
         appVersion: 2,
       };
-
       const folioRef = this.afs.doc('folios/solicitudes').ref;
       let folio = 1;
 
@@ -114,12 +116,16 @@ export class SolicitudesService {
     }
   }
 
-  async update(command: UpdateSolicitud) {
+  async update(command: UpdateSolicitud, user: User) {
+    const { uid, displayName } = user;
     try {
       const doc = this.afs.doc(`${this.COLLECTION}/${command.id}`);
-      const data = {
+      const data: Partial<SolicitudDeDeposito> = {
         ...command.changes,
-        lastUpdated: firebase.firestore.Timestamp.now(),
+        updateUser: displayName,
+        updateUserUid: uid,
+        dateCreated: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
       };
       await doc.ref.update(data);
     } catch (error) {
@@ -150,7 +156,6 @@ export class SolicitudesService {
     sucursal: string,
     max: number = 20
   ): Observable<SolicitudDeDeposito[]> {
-    console.log('Fetching pendientes Sucursal:', sucursal);
     return this.findPorSucursal(sucursal, 'PENDIENTE', max);
   }
 

@@ -14,12 +14,12 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- <ion-toolbar>
+  <ion-toolbar>
     <ion-searchbar
       placeholder="Buscar"
       (ionChange)="onFilter($event)"
     ></ion-searchbar>
-  </ion-toolbar> -->
+  </ion-toolbar>
   <papx-solicitudes-autorizadas-list
     [solicitudes]="autorizadas$ | async"
   ></papx-solicitudes-autorizadas-list>

@@ -51,12 +51,9 @@ export class ClienteSelectorComponent implements OnInit {
   lookUp(value: string) {
     return this.service.clientesCache$.pipe(
       map((rows) =>
-        // filter(rows, (item) =>
-        //   includes(item.nombre.toLowerCase(), value.toLowerCase())
-        // )
-        rows.filter((item) =>
-          item.nombre.toLowerCase().includes(value.toLowerCase())
-        )
+        rows.filter((item) => {
+          return item.nombre.toLowerCase().includes(value.toLowerCase());
+        })
       )
     );
   }

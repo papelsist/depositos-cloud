@@ -7,6 +7,7 @@ import { catchError, map, shareReplay, switchMap, take } from 'rxjs/operators';
 import { Cliente, ClienteDto } from '@papx/models';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -19,21 +20,16 @@ export class ClientesService {
 
   clientesCache$ = this.fetchClientesCache().pipe(shareReplay());
 
-  // repository$: Observable<{ [key: string]: ClienteDto }> = this.clientes$.pipe(
-  //   map((cliente) => keyBy(cliente, 'id'))
-  // );
-
   constructor(
     private http: HttpClient,
     private afs: AngularFirestore,
     private fs: AngularFireStorage
   ) {}
 
-  // findById(id: string): Observable<Cliente> {
-  //   return this.repository$.pipe(map((directory) => directory[id]));
-  // }
-
   fetchClientesCache(): Observable<ClienteDto[]> {
+    if (environment.useEmulators) {
+      return this.fetchClientesCacheForEmulator();
+    }
     const ref = this.fs.ref('catalogos/ctes-all.json');
     return ref.getDownloadURL().pipe(
       switchMap((url) =>
@@ -49,11 +45,31 @@ export class ClientesService {
               };
               return res;
             })
-          ),
-          catchError((err) =>
-            throwError('Error descargando clientes ', err.message)
           )
         )
+      ),
+      catchError((err) => {
+        const { code, message } = err;
+        return throwError({ code, message });
+      })
+    );
+  }
+
+  fetchClientesCacheForEmulator(): Observable<ClienteDto[]> {
+    const url =
+      'https://firebasestorage.googleapis.com/v0/b/papx-ws-dev.appspot.com/o/catalogos%2Fctes-all.json?alt=media&token=6c6b0dfa-b3ad-4e9a-8886-431e5950b675';
+    return this.http.get<any[]>(url).pipe(
+      map((rows) =>
+        rows.map((i) => {
+          const res: ClienteDto = {
+            id: i.i,
+            nombre: i.n,
+            rfc: i.r,
+            clave: i.cv,
+            credito: !!i.cr,
+          };
+          return res;
+        })
       )
     );
   }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
+import { Platform, ToastController } from '@ionic/angular';
 
 import { AngularFireMessaging } from '@angular/fire/messaging';
 
@@ -21,8 +21,10 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private displayService: DisplayModeService,
-    private afm: AngularFireMessaging
+    private afm: AngularFireMessaging,
+    private toastController: ToastController
   ) {
+    console.log('Inicializando main component....');
     this.initializeApp();
   }
 
@@ -32,9 +34,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     // this.logSecurityState();
-    this.afm.messages.subscribe((msg) =>
-      console.log('Message from FCM: ', msg)
-    );
+    this.afm.messages.subscribe((msg: any) => {
+      console.log('Message from FCM: ', msg);
+      const { title, body } = msg.notification;
+      this.showMessage(title, body);
+    });
   }
 
   /**
@@ -53,5 +57,24 @@ export class AppComponent implements OnInit {
   async signOut() {
     await this.authService.singOut();
     this.router.navigate(['/login']);
+  }
+
+  async showMessage(header: string, message: string) {
+    const toast = await this.toastController.create({
+      header,
+      message,
+      animated: true,
+      duration: 5000,
+      color: 'warning',
+      buttons: [
+        {
+          side: 'end',
+          icon: 'checkmark',
+          text: 'Ok',
+          role: 'cancel',
+        },
+      ],
+    });
+    await toast.present();
   }
 }

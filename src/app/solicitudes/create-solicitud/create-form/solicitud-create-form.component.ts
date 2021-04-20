@@ -102,7 +102,6 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
   }
 
   private validacionDeNoDuplicados() {
-    console.log('Registrando validacion de no duplicado');
     const fechaDeposito$ = this.form.get('fechaDeposito').valueChanges;
     const total$ = this.form.get('total').valueChanges;
     const banco$ = this.form.get('banco').valueChanges;

@@ -12,11 +12,13 @@ import {
   withLatestFrom,
 } from 'rxjs/operators';
 
-import { SolicitudesService } from '@papx/data-access';
+import { SolicitudesService, NotificationsService } from '@papx/data-access';
 import { SolicitudDeDeposito, User, UserInfo } from '@papx/models';
-import { BaseComponent } from 'src/app/core';
 import { SolicitudCardComponent } from '@papx/shared/ui-solicitudes/solicitud-card/solicitud-card.component';
 import { AuthService } from '@papx/auth';
+
+import { BaseComponent } from 'src/app/core';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'papx-solicitudes-pendientes',
@@ -63,18 +65,23 @@ export class PendientesPage extends BaseComponent implements OnInit {
     this.pendientes$,
     this.filtroBtnColor$,
     this.authService.userInfo$,
+    this.notificationsService.token$,
   ]).pipe(
-    map(([filtrar, pendientes, filtroColor, user]) => ({
+    map(([filtrar, pendientes, filtroColor, user, token]) => ({
       filtrar,
       pendientes,
       filtroColor,
+      user,
       sucursal: user.sucursal,
+      token,
     }))
   );
 
   constructor(
     private service: SolicitudesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private notificationsService: NotificationsService,
+    private alertController: AlertController
   ) {
     super();
   }
@@ -128,5 +135,34 @@ export class PendientesPage extends BaseComponent implements OnInit {
 
   onSelection(sol: SolicitudDeDeposito) {
     console.log('Detail of: ', sol);
+  }
+
+  async registrarNotificaciones(user: UserInfo, token?: string) {
+    // console.log('Registrando notificaciones...', user, token);
+    if (token) {
+      const alert = await this.alertController.create({
+        header: 'Subscripción a notificaciones',
+        message:
+          'Este equipo ya está registrado para recibir notificaciones, desea actualizarlo?',
+        animated: true,
+        mode: 'ios',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+          },
+          {
+            text: 'Aceptar',
+            role: 'accept',
+            handler: async () => {
+              await this.notificationsService.enableNotifications(user, {});
+            },
+          },
+        ],
+      });
+      await alert.present();
+    } else {
+      // this.notificationsService.enableNotifications(user, {});
+    }
   }
 }

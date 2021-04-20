@@ -20,10 +20,6 @@ import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  readonly hostUrl = 'http://localhost:8100/';
-
-  readonly user$ = this.auth.user;
-
   readonly currentUser$ = this.auth.authState.pipe(
     map((user) => (user ? mapUser(user) : null))
   );
@@ -34,9 +30,9 @@ export class AuthService {
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => {
-      // return user ? this.getUser(user.uid) : of(null);
-      return user ? this.getUserByEmail(user.email) : of(null);
+      return user ? this.getUserByUid(user.uid) : of(null);
     }),
+    shareReplay(),
     catchError((err) => throwError(err))
   );
 
@@ -85,38 +81,24 @@ export class AuthService {
       email,
       password
     );
-    /*
-    await credentials.user.sendEmailVerification({
-      url: this.hostUrl,
-      handleCodeInApp: false,
-    });
-    */
     return credentials;
   }
 
   sendEmailVerification(user: User) {
     return user.firebaseUser.sendEmailVerification({
-      url: this.hostUrl,
+      url: location.origin,
       handleCodeInApp: false,
     });
   }
 
   createSiipapUser(email: string, password: string, displayName: string) {
     const data = { email, password, displayName };
-    const callable = this.fns.httpsCallable('createSiipapUser');
+    const callable = this.fns.httpsCallable('createUser');
     return callable(data).pipe(
       map(() => this.auth.signInWithEmailAndPassword(email, password)),
-      map(async (p) => {
-        const d = await p;
-        const user = d.user;
-        await user.sendEmailVerification({
-          url: this.hostUrl,
-          handleCodeInApp: false,
-        });
-        console.log('Usuario sin veriicar Verification mail sent');
-        return user;
+      tap((user) => {
+        console.log('User created: ', user);
       }),
-      tap((user) => {}),
       catchError((err) => throwError(err))
     );
   }
@@ -125,16 +107,11 @@ export class AuthService {
     return this.firestore.doc<UserInfo>(`users/${uid}`).valueChanges();
   }
 
-  getUserByUid(uid: string): Observable<UserInfo | null> {
+  getUserByUid(uid: string): Observable<UserInfo> {
     return this.firestore
-      .collection<UserInfo>('users', (ref) => {
-        return ref.where('uid', '==', uid).limit(1);
-      })
-      .valueChanges()
-      .pipe(
-        map((users) => (users.length > 0 ? users[0] : null)),
-        catchError((err) => throwError(err))
-      );
+      .collection<UserInfo>('usuarios')
+      .doc(uid)
+      .valueChanges({ idField: 'uid' });
   }
 
   getUserByEmail(email: string): Observable<UserInfo | null> {

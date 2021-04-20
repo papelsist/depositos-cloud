@@ -6,9 +6,8 @@ import { CarterasPopoverComponent } from './carteras-popover.component';
 @Component({
   selector: 'papx-cartera-selector',
   template: ` <ion-button
-    color="tertiary"
-    fill="outline"
-    shape="round"
+    color="secondary"
+    fill="clear"
     strong="true"
     [disabled]="disabled"
     (click)="select($event)"

@@ -1,8 +1,15 @@
 <ion-app>
   <ion-menu side="start" menuId="first" contentId="main" #menu>
     <ion-header *ngIf="user$ | async as user">
-      <ion-toolbar color="primary" translucent>
-        <ion-title>{{ user.displayName }}</ion-title>
+      <ion-toolbar color="accent" translucent>
+        <ion-title>
+          {{ user.displayName }}
+        </ion-title>
+        <ion-buttons slot="start">
+          <ion-avatar>
+            <img src="assets/images/menu-logo.svg" class="logo-image" />
+          </ion-avatar>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 

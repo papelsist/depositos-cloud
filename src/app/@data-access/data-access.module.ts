@@ -42,7 +42,7 @@ import { environment } from '../../environments/environment';
 export function initializeApp1(afa: AngularFireAuth): any {
   return () => {
     if (environment.useEmulators) {
-      console.debug('Using Emulator Auth service...');
+      console.info('Using Emulator Auth service...');
       return new Promise((resolve: any) => {
         afa.useEmulator(`http://${location.hostname}:9099/`);
         setTimeout(() => resolve(), 1000); // delay Angular initialization by 100ms
@@ -75,13 +75,14 @@ export function initializeApp1(afa: AngularFireAuth): any {
       provide: USE_FUNCTIONS_EMULATOR,
       useValue: environment.useEmulators ? ['localhost', 5001] : undefined,
     },
-    // { provide: NEW_ORIGIN_BEHAVIOR, useValue: true },
-    // {
-    //   provide: FUNCTIONS_ORIGIN,
-    //   useFactory: () => (isDevMode() ? undefined : location.origin),
-    // },
+
+    { provide: NEW_ORIGIN_BEHAVIOR, useValue: true },
+    {
+      provide: FUNCTIONS_ORIGIN,
+      useFactory: () => (isDevMode() ? undefined : location.origin),
+    },
+    // { provide: REGION, useValue: 'us-central1' },
     { provide: BUCKET, useValue: environment.firebaseConfig.storageBucket },
-    { provide: REGION, useValue: 'us-central1' },
     /* Delay the app initialization process by 100ms*/
     {
       provide: APP_INITIALIZER,

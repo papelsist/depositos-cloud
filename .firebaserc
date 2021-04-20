@@ -2,7 +2,8 @@
   "projects": {
     "depositos": "papx-ws-dev",
     "default": "papx-ws-dev",
-    "staging": "papx-ws-prod"
+    "staging": "papx-ws-prod",
+    "certificacion": "papx-ws-dev"
   },
   "targets": {
     "papx-ws-dev": {

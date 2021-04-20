@@ -37,14 +37,7 @@ export class EditSolicitudState {
     this.currentId$.next(id);
   }
 
-  update(sol: SolicitudDeDeposito, data: any, userInfo: UserInfo) {
-    const { uid, displayName, email } = userInfo;
-    const updateUser = { uid, displayName, email };
-    let changes = {
-      ...data,
-      updateUser,
-    };
-
+  update(sol: Partial<SolicitudDeDeposito>, changes: any, userInfo: UserInfo) {
     if (sol.rechazo) {
       const ultimo = sol.rechazo;
       const rechasosAnteriores = sol.rechasosAnteriores ?? [];
@@ -56,6 +49,6 @@ export class EditSolicitudState {
       };
     }
     console.log('Actualizando id: ', sol.id);
-    return this.dataService.update({ id: sol.id, changes });
+    return this.dataService.update({ id: sol.id, changes }, userInfo);
   }
 }

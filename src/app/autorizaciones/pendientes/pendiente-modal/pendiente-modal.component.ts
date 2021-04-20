@@ -17,7 +17,7 @@ import { SolicitudDeDeposito } from '@papx/models';
     </ion-header>
     <ion-content class="ion-padding">
       <papx-solicitud-card [solicitud]="solicitud">
-        <ion-toolbar *ngIf="solicitud.sucursal === 'OFICINAS'">
+        <ion-toolbar>
           <ion-buttons slot="start">
             <ion-button color="success" (click)="autorizar(solicitud)">
               <ion-label>Autorizar </ion-label>
@@ -30,6 +30,20 @@ import { SolicitudDeDeposito } from '@papx/models';
           </ion-buttons>
         </ion-toolbar>
       </papx-solicitud-card>
+      <ion-grid *ngIf="solicitud.rechasosAnteriores" class="ion-padding">
+        <ion-row>
+          <ion-col size="12">
+            <ion-label class="ion-text-center">
+              <h2>Rechazos anteriores</h2>
+            </ion-label>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let r of solicitud.rechasosAnteriores">
+          <ion-col>
+            <papx-rechazo-info [rechazo]="r"></papx-rechazo-info>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-content>
   `,
 })
