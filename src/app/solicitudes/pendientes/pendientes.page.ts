@@ -14,11 +14,11 @@ import {
 
 import { SolicitudesService, NotificationsService } from '@papx/data-access';
 import { SolicitudDeDeposito, User, UserInfo } from '@papx/models';
-import { SolicitudCardComponent } from '@papx/shared/ui-solicitudes/solicitud-card/solicitud-card.component';
 import { AuthService } from '@papx/auth';
 
 import { BaseComponent } from 'src/app/core';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
+import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solicitud-detail-modal/solicitud-detail-modal.component';
 
 @Component({
   selector: 'papx-solicitudes-pendientes',
@@ -26,28 +26,15 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./pendientes.page.scss'],
 })
 export class PendientesPage extends BaseComponent implements OnInit {
-  STORAGE_KEY = 'sx-depositos-pwa.solicitudes.pendientes';
+  view: 'list' | 'cards' = 'list';
 
-  _pauseResume$ = new BehaviorSubject<boolean>(true);
-  @ViewChildren(SolicitudCardComponent)
-  elements: QueryList<SolicitudCardComponent>;
+  filtrar$ = new BehaviorSubject<boolean>(true);
 
-  timer$ = timer(1000, 3000).pipe(
-    withLatestFrom(this._pauseResume$),
-    takeUntil(this.destroy$),
-    filter(([time, val]) => val),
-    tap(([time, val]) => this.refreshRetraso(time))
-  );
+  user$ = this.authService.userInfo$;
 
-  config: { view: 'cards' | 'list'; filtrar: string } = this.loadConfig();
-
-  filtrar$ = new BehaviorSubject<boolean>(this.config.filtrar === 'true');
-
-  pendientes$ = combineLatest([this.filtrar$, this.authService.userInfo$]).pipe(
-    switchMap(([filtrar, user]) =>
-      filtrar
-        ? this.service.findPendientesByUser(user.uid)
-        : this.service.findPendientesBySucursal(user.sucursal)
+  pendientes$ = this.user$.pipe(
+    switchMap((user) =>
+      user ? this.service.findPendientesBySucursal(user.sucursal) : []
     ),
     map((rows) =>
       rows.sort((a, b) =>
@@ -56,21 +43,17 @@ export class PendientesPage extends BaseComponent implements OnInit {
     )
   );
 
-  filtroBtnColor$: Observable<string> = this.filtrar$.pipe(
-    map((value) => (value ? 'primary' : ''))
-  );
-
   vm$ = combineLatest([
     this.filtrar$,
     this.pendientes$,
-    this.filtroBtnColor$,
     this.authService.userInfo$,
     this.notificationsService.token$,
   ]).pipe(
-    map(([filtrar, pendientes, filtroColor, user, token]) => ({
+    map(([filtrar, pendientes, user, token]) => ({
       filtrar,
-      pendientes,
-      filtroColor,
+      pendientes: filtrar
+        ? pendientes.filter((item) => item.createUserUid === user.uid)
+        : pendientes,
       user,
       sucursal: user.sucursal,
       token,
@@ -81,60 +64,32 @@ export class PendientesPage extends BaseComponent implements OnInit {
     private service: SolicitudesService,
     private authService: AuthService,
     private notificationsService: NotificationsService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private modalController: ModalController
   ) {
     super();
   }
 
-  private loadConfig(): any {
-    const sjson = localStorage.getItem(this.STORAGE_KEY);
-    return sjson ? JSON.parse(sjson) : { view: 'cards', filtrar: 'false' };
-  }
-
-  private saveConfig() {
-    const sjson = JSON.stringify(this.config);
-    localStorage.setItem(this.STORAGE_KEY, sjson);
-  }
-
-  ngOnInit() {
-    this.timer$.subscribe(
-      () => {},
-      () => {},
-      () => console.log('COMPLETE PULLING')
-    );
-  }
+  ngOnInit() {}
 
   changeView(view: 'list' | 'cards') {
-    this.config = { ...this.config, view };
-    this.saveConfig();
-  }
-
-  private refreshRetraso(time: number) {
-    // console.log('REFRESH RETRASOS: ', time);
-    this.elements.forEach((item) => item.updateRetraso());
-  }
-
-  /**
-   * Start refreshing retraso
-   */
-  ionViewDidEnter() {
-    this._pauseResume$.next(true);
-  }
-  /**
-   * Stop refreshing retraso
-   */
-  ionViewDidLeave() {
-    this._pauseResume$.next(false);
+    this.view = view;
   }
 
   filtrar(value: boolean) {
     this.filtrar$.next(!value);
-    this.config.filtrar = (!value).toString();
-    this.saveConfig();
   }
 
-  onSelection(sol: SolicitudDeDeposito) {
-    console.log('Detail of: ', sol);
+  async onSelection(solicitud: SolicitudDeDeposito) {
+    const modal = await this.modalController.create({
+      component: SolicitudDetailModalComponent,
+      cssClass: 'solicitud-detail-modal',
+      mode: 'ios',
+      componentProps: {
+        solicitud,
+      },
+    });
+    return await modal.present();
   }
 
   async registrarNotificaciones(user: UserInfo, token?: string) {
@@ -162,7 +117,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
       });
       await alert.present();
     } else {
-      // this.notificationsService.enableNotifications(user, {});
+      this.notificationsService.enableNotifications(user, {});
     }
   }
 }

@@ -21,5 +21,8 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     // this.user$.subscribe((u) => console.log(u));
+    // this.authService.currentUser$.subscribe((u) =>
+    //   console.log('Firebase user: ', u)
+    // );
   }
 }

@@ -6,11 +6,6 @@ import { throwIfAlreadyLoaded } from '../utils/angular';
 
 const routes: Routes = [
   {
-    path: 'signup',
-    loadChildren: () =>
-      import('./sign-up/sign-up.module').then((m) => m.SignUpPageModule),
-  },
-  {
     path: 'pending',
     loadChildren: () =>
       import('./pending/pending.module').then((m) => m.PendingPageModule),

@@ -8,6 +8,8 @@ import { CatalogosService } from 'src/app/@data-access/services/catalogos.servic
 import { Depositos } from '@papx/models';
 import pickBy from 'lodash-es/pickBy';
 
+import firebase from 'firebase/app';
+
 @Component({
   selector: 'app-account',
   templateUrl: './account.page.html',
@@ -15,6 +17,7 @@ import pickBy from 'lodash-es/pickBy';
 })
 export class AccountPage {
   user$ = this.service.userInfo$;
+  firebaseUser$ = this.service.currentUser$;
   claims$ = this.service.claims$.pipe(
     map((claim) =>
       pickBy(claim, (value, key) => key.startsWith('xpapDepositos') && value)
@@ -27,7 +30,6 @@ export class AccountPage {
   ) {}
 
   async modificarSucursal(user: UserInfo) {
-    console.log('Catalogo service: ', this.catalogos.sucursales);
     const inputs: any[] = this.catalogos.sucursales.map((item) => ({
       name: item.nombre,
       type: 'radio',
@@ -49,7 +51,6 @@ export class AccountPage {
         {
           text: 'Aceptar',
           handler: (value) => {
-            console.log('Confirm Ok: ', value);
             this.updateSucursal(user, value);
           },
         },
@@ -66,5 +67,40 @@ export class AccountPage {
   getRoleLabel(role: string) {
     const res = Depositos.RolesMap[role];
     return res ?? role;
+  }
+
+  async modificarDisplayName(user: firebase.User, current: any) {
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: 'Sucursales',
+      inputs: [
+        {
+          tabindex: 0,
+          label: 'Nombre corto',
+          name: 'displayName',
+          value: current,
+          type: 'text',
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {},
+        },
+        {
+          text: 'Aceptar',
+          handler: async (value) => {
+            this.service.updateProfile(value).subscribe(
+              () => console.log('Profile updated'),
+              (err) => console.error('Error actualizando firebase user ', err)
+            );
+          },
+        },
+      ],
+    });
+
+    await alert.present();
   }
 }

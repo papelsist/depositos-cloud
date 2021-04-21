@@ -65,14 +65,6 @@
         <div *ngIf="error$ | async as error" class="ion-padding">
           <ion-note color="danger"> {{error}} </ion-note>
         </div>
-        <div class="ion-padding">
-          Si no eres usuario solicita tu
-          <a routerLink="/signup"> registro</a>
-          <p>
-            Olvidé mi
-            <a routerLink="/restorpassword"> contraseña</a>
-          </p>
-        </div>
       </ion-col>
     </ion-row>
   </ion-grid>

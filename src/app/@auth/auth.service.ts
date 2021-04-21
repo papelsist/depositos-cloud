@@ -16,6 +16,7 @@ import {
 
 import { User, UserInfo } from '../@models/user';
 import { mapUser } from './utils';
+
 import { AngularFirestore } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
@@ -29,10 +30,8 @@ export class AuthService {
   );
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
-    switchMap((user) => {
-      return user ? this.getUserByUid(user.uid) : of(null);
-    }),
-    shareReplay(),
+    switchMap((user) => (user ? this.getUser(user.uid) : of(null))),
+    shareReplay(1),
     catchError((err) => throwError(err))
   );
 
@@ -76,14 +75,6 @@ export class AuthService {
     }
   }
 
-  async createUser(email: string, password: string) {
-    const credentials = await this.auth.createUserWithEmailAndPassword(
-      email,
-      password
-    );
-    return credentials;
-  }
-
   sendEmailVerification(user: User) {
     return user.firebaseUser.sendEmailVerification({
       url: location.origin,
@@ -91,20 +82,21 @@ export class AuthService {
     });
   }
 
-  createSiipapUser(email: string, password: string, displayName: string) {
-    const data = { email, password, displayName };
-    const callable = this.fns.httpsCallable('createUser');
-    return callable(data).pipe(
-      map(() => this.auth.signInWithEmailAndPassword(email, password)),
-      tap((user) => {
-        console.log('User created: ', user);
+  updateProfile(profile: { displayName: string }) {
+    return this.currentUser$.pipe(
+      take(1),
+      switchMap(async (user) => {
+        await user.firebaseUser.updateProfile(profile);
+        return user;
       }),
-      catchError((err) => throwError(err))
+      switchMap(
+        async (user) => await this.updateProfileInUsers(user.uid, profile)
+      )
     );
   }
 
   getUser(uid: string) {
-    return this.firestore.doc<UserInfo>(`users/${uid}`).valueChanges();
+    return this.firestore.doc<UserInfo>(`usuarios/${uid}`).valueChanges();
   }
 
   getUserByUid(uid: string): Observable<UserInfo> {
@@ -114,22 +106,14 @@ export class AuthService {
       .valueChanges({ idField: 'uid' });
   }
 
-  getUserByEmail(email: string): Observable<UserInfo | null> {
-    return this.firestore
-      .collection<UserInfo>('usuarios', (ref) => {
-        return ref.where('email', '==', email).limit(1);
-      })
-      .valueChanges()
-      .pipe(
-        map((users) => (users.length > 0 ? users[0] : null)),
-        catchError((err) => throwError(err))
-      );
-  }
-
   async updateSucursal(user: UserInfo, sucursal: string) {
     await this.firestore
       .collection('usuarios')
       .doc(user.uid)
       .update({ sucursal });
+  }
+
+  async updateProfileInUsers(uid: string, profile: any) {
+    await this.firestore.collection('usuarios').doc(uid).update(profile);
   }
 }

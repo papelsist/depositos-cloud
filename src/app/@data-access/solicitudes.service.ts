@@ -154,7 +154,7 @@ export class SolicitudesService {
 
   findPendientesBySucursal(
     sucursal: string,
-    max: number = 20
+    max: number = 30
   ): Observable<SolicitudDeDeposito[]> {
     return this.findPorSucursal(sucursal, 'PENDIENTE', max);
   }
@@ -162,7 +162,7 @@ export class SolicitudesService {
   findPorSucursal(
     sucursal: string,
     status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO' | 'ATENDIDO',
-    max: number = 20
+    max: number = 30
   ): Observable<SolicitudDeDeposito[]> {
     return this.afs
       .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
