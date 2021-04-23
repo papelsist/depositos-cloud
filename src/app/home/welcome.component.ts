@@ -11,7 +11,7 @@ import {
     <ion-card>
       <img
         class="banner-img"
-        src="https://firebasestorage.googleapis.com/v0/b/depositos-sx.appspot.com/o/mobil-apps-images%2Fpapelsa-75-splash-min.png?alt=media&token=499ec7c7-6bd3-4c39-882e-75c6f276e451"
+        src="https://firebasestorage.googleapis.com/v0/b/papx-ws-prod.appspot.com/o/images%2Flogo.svg?alt=media&token=c957d196-9ee4-4597-9291-189f393cc2b7"
       />
       <ion-card-header>
         <ion-card-title>SX-DEPOSITOS</ion-card-title>
@@ -29,26 +29,6 @@ import {
         </ion-text>
       </ion-card-content>
     </ion-card>
-    <div class="actions">
-      <ion-button
-        routerLink="/solicitudes"
-        fill="clear"
-        expand="full"
-        color="secondary"
-      >
-        <ion-label>Solicitudes</ion-label>
-        <ion-icon slot="start" name="list-circle-outline"></ion-icon>
-      </ion-button>
-      <ion-button
-        routerLink="/autorizaciones"
-        fill="clear"
-        expand="full"
-        color="tertiary"
-      >
-        <ion-label>Autorizaciones</ion-label>
-        <ion-icon slot="start" name="shield-checkmark"></ion-icon>
-      </ion-button>
-    </div>
   `,
   styles: [
     `

@@ -15,6 +15,8 @@ import { DisplayModeService } from './core/display-mode.service';
 })
 export class AppComponent implements OnInit {
   user$ = this.authService.currentUser$;
+  accesarSolicitudes$ = this.authService.canCreateSolicitudes$;
+  accesarAutorizaciones$ = this.authService.canCreateSolicitudes$;
 
   constructor(
     private platform: Platform,

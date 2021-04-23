@@ -18,8 +18,12 @@ import { es } from 'date-fns/locale';
     <ion-item [color]="color">
       <ion-label class="ion-text-wrap">
         <p class="motivo">
-          Rechazo: {{ rechazo.comentario }} / {{ rechazo.motivo }}
+          Rechazo: {{ rechazo.comentario }} / {{ rechazo.motivo }} /
+          <span *ngIf="rechazo.comentario">
+            {{ rechazo.comentario }}
+          </span>
         </p>
+
         <p>
           Por: {{ rechazo.userName }}
           <span class="ion-padding-start">

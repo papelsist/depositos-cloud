@@ -19,11 +19,21 @@
           <ion-label>Inicio</ion-label>
           <ion-icon slot="start" name="home"></ion-icon>
         </ion-item>
-        <ion-item detail routerLink="/solicitudes" (click)="menu.toggle()">
+        <ion-item
+          detail
+          routerLink="/solicitudes"
+          (click)="menu.toggle()"
+          *ngIf="accesarSolicitudes$ | async"
+        >
           <ion-label>Solicitudes</ion-label>
           <ion-icon slot="start" name="list-circle-outline"></ion-icon>
         </ion-item>
-        <ion-item detail routerLink="/autorizaciones" (click)="menu.toggle()">
+        <ion-item
+          detail
+          routerLink="/autorizaciones"
+          (click)="menu.toggle()"
+          *ngIf="accesarAutorizaciones$"
+        >
           <ion-label>Autorizaciones</ion-label>
           <ion-icon slot="start" name="shield-checkmark"></ion-icon>
         </ion-item>

@@ -182,6 +182,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
         await this.startLoading('Registrando rechazo');
         const payload: AutorizacionRechazo = {
           motivo: data.motivo,
+          comentario: data.comentario,
           uid: user.uid,
           userName: user.displayName,
         };

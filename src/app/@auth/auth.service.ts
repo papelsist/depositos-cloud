@@ -31,8 +31,15 @@ export class AuthService {
 
   readonly userInfo$: Observable<UserInfo | null> = this.currentUser$.pipe(
     switchMap((user) => (user ? this.getUser(user.uid) : of(null))),
-    shareReplay(1),
     catchError((err) => throwError(err))
+  );
+
+  canCreateSolicitudes$ = this.claims$.pipe(
+    map((claims) => claims['xpapDepositosCrear'])
+  );
+
+  canAutoriceSolicitudes$ = this.claims$.pipe(
+    map((claims) => claims['xpapDepositosAutorizar2'])
   );
 
   constructor(
