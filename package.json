@@ -1,6 +1,6 @@
 {
   "name": "sx-depositos-pwa",
-  "version": "1.0.0",
+  "version": "1.0.20",
   "author": "Ruben Cancino Ramos",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -58,5 +58,5 @@
     "tslint": "~6.1.0",
     "typescript": "~4.1.3"
   },
-  "description": "An Ionic project"
+  "description": "Sistema de generacion y autorización de solicitudes de deposito y transferencias bancarias para el sistema SIIPAPX desde la nube"
 }

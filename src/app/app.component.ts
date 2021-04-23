@@ -7,6 +7,7 @@ import { AngularFireMessaging } from '@angular/fire/messaging';
 import { AuthService } from './@auth/auth.service';
 import { Router } from '@angular/router';
 import { DisplayModeService } from './core/display-mode.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
   user$ = this.authService.currentUser$;
   accesarSolicitudes$ = this.authService.canCreateSolicitudes$;
   accesarAutorizaciones$ = this.authService.canAutoriceSolicitudes$;
+  projectId = environment.firebaseConfig.projectId;
 
   constructor(
     private platform: Platform,
@@ -26,7 +28,6 @@ export class AppComponent implements OnInit {
     private afm: AngularFireMessaging,
     private toastController: ToastController
   ) {
-    console.log('Inicializando main component....');
     this.initializeApp();
   }
 

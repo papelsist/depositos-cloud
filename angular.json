@@ -178,6 +178,9 @@
             },
             "ci": {
               "devServerTarget": "app:serve:ci"
+            },
+            "certificacion": {
+              "devServerTarget": "app:serve:certificacion"
             }
           }
         },
