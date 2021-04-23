@@ -40,6 +40,7 @@
                 fill="clear"
                 expand="full"
                 color="tertiary"
+                *ngIf="accesarAutorizaciones$ | async"
               >
                 <ion-label>Autorizaciones</ion-label>
                 <ion-icon slot="start" name="shield-checkmark"></ion-icon>

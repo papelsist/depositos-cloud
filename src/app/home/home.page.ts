@@ -15,7 +15,7 @@ export class HomePage implements OnInit {
   claims$ = this.authService.claims$;
 
   accesarSolicitudes$ = this.authService.canCreateSolicitudes$;
-  accesarAutorizaciones$ = this.authService.canCreateSolicitudes$;
+  accesarAutorizaciones$ = this.authService.canAutoriceSolicitudes$;
 
   constructor(private authService: AuthService) {}
 

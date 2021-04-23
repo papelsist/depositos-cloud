@@ -39,7 +39,7 @@ export class AuthService {
   );
 
   canAutoriceSolicitudes$ = this.claims$.pipe(
-    map((claims) => claims['xpapDepositosAutorizar2'])
+    map((claims) => claims['xpapDepositosAutorizar'])
   );
 
   constructor(
