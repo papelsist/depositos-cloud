@@ -16,7 +16,15 @@ export class SettingsPage implements OnInit {
     this.notificationService.token$,
     this.auth.userInfo$,
     this.auth.claims$,
-  ]).pipe(map(([token, user, claims]) => ({ token, user, claims })));
+    this.auth.canAutoriceSolicitudes$,
+  ]).pipe(
+    map(([token, user, claims, canAutorizar]) => ({
+      token,
+      user,
+      claims,
+      canAutorizar,
+    }))
+  );
 
   constructor(
     private auth: AuthService,
