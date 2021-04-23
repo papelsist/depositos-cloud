@@ -19,11 +19,5 @@ export class HomePage implements OnInit {
 
   constructor(private authService: AuthService) {}
 
-  ngOnInit() {
-    // this.user$.subscribe((u) => console.log(u));
-    // this.authService.currentUser$.subscribe((u) =>
-    //   console.log('Firebase user: ', u)
-    // );
-    this.accesarSolicitudes$.subscribe((data) => console.log('Data: ', data));
-  }
+  ngOnInit() {}
 }
