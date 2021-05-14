@@ -11,3 +11,4 @@ export * from './cartera';
 export * from './sucursal';
 export * from './autorizacion';
 export * from './dtos';
+export * from './periodo';

@@ -58,6 +58,10 @@ export class CreateSolicitudPage implements OnInit {
     }
   }
 
+  onCancelar() {
+    this.router.navigate(['solicitudes', 'pendientes']);
+  }
+
   async validarDuplicado(sol: Partial<SolicitudDeDeposito>) {
     const found = await this.service.buscarDuplicado(sol);
     if (found.length > 0) {

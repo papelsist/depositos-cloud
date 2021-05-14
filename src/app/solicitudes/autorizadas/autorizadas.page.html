@@ -3,9 +3,25 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Depósitos autorizados</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="filtrar()" [color]="filtroBtnColor$ | async">
+    <ion-title>
+      <div class="title">
+        <span>Depósitos autorizados</span>
+        <span
+          class="ion-text-center periodo"
+          *ngIf="criteria$ | async as criteria"
+        >
+          <span> {{criteria.fechaInicial | date: 'dd/MM/yyyy'}} al</span>
+          <span> {{criteria.fechaFinal | date: 'dd/MM/yyyy'}} </span>
+        </span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end" *ngIf="filtrar$ | async as value">
+      <papx-periodo-selector-btn
+        [criteria]="criteria"
+        *ngIf="criteria$ | async as criteria"
+        (citeriaChanged)="changeCriteria($event)"
+      ></papx-periodo-selector-btn>
+      <ion-button (click)="filtrar(value)" [color]="value ? 'primary': ''">
         <ion-icon name="filter" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -13,6 +29,14 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Filtrar"
+      (ionChange)="onSearch(search.value)"
+      #search
+    ></ion-searchbar>
+  </ion-toolbar>
+
   <papx-autorizadas-list
     [solicitudes]="solicitudes$ | async"
   ></papx-autorizadas-list>

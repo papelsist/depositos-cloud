@@ -8,7 +8,7 @@ import firebase from 'firebase/app';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, shareReplay, take } from 'rxjs/operators';
 
-import { isSameDay, parseJSON } from 'date-fns';
+import { isSameDay, parseJSON, parseISO, startOfDay, endOfDay } from 'date-fns';
 import toNumber from 'lodash-es/toNumber';
 
 import {
@@ -16,7 +16,7 @@ import {
   UpdateSolicitud,
 } from '../@models/solicitud-de-deposito';
 import { Autorizacion, AutorizacionRechazo } from '../@models/autorizacion';
-import { User } from '@papx/models';
+import { PeriodoSearchCriteria, User } from '@papx/models';
 
 @Injectable({ providedIn: 'root' })
 export class SolicitudesService {
@@ -24,7 +24,10 @@ export class SolicitudesService {
 
   pendientesPorAutorizar$ = this.afs
     .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
-      ref.where('status', '==', 'PENDIENTE').limit(20)
+      ref
+        .where('status', '==', 'PENDIENTE')
+        .where('appVersion', '==', 2)
+        .limit(100)
     )
     .valueChanges({ idField: 'id' })
     .pipe(shareReplay());
@@ -39,7 +42,7 @@ export class SolicitudesService {
       ref
         .where('status', '==', 'AUTORIZADO')
         .orderBy('autorizacion.fecha', 'desc')
-        .limit(5)
+        .limit(20)
     )
     .snapshotChanges()
     .pipe(
@@ -63,7 +66,10 @@ export class SolicitudesService {
 
   rechazadas$ = this.afs
     .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
-      ref.where('status', '==', 'RECHAZADO').limit(20)
+      ref
+        .where('status', '==', 'RECHAZADO')
+        .where('appVersion', '==', 2)
+        .limit(50)
     )
     .valueChanges({ idField: 'id' })
     .pipe(shareReplay());
@@ -175,6 +181,30 @@ export class SolicitudesService {
       .pipe(catchError((err) => throwError(err)));
   }
 
+  findAutorizadas(
+    sucursal: string,
+    criteria: PeriodoSearchCriteria
+  ): Observable<SolicitudDeDeposito[]> {
+    const { fechaInicial, fechaFinal, registros } = criteria;
+    const inicial = startOfDay(parseJSON(criteria.fechaInicial));
+    const final = endOfDay(parseJSON(criteria.fechaFinal));
+    console.log(
+      'Fecha inicial JSON: ',
+      startOfDay(parseJSON(criteria.fechaInicial))
+    );
+    console.log('Fecha inicial ISO: ', parseISO(criteria.fechaInicial));
+    return this.afs
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
+        let query = ref
+          .where('autorizacion.fecha', '>=', inicial)
+          .where('autorizacion.fecha', '<=', final)
+          .where('sucursal', '==', sucursal);
+        return query.limit(registros);
+      })
+      .valueChanges({ idField: 'id' })
+      .pipe(catchError((err) => throwError(err)));
+  }
+
   findPendientesPorAutorizar(): Observable<SolicitudDeDeposito[]> {
     return this.afs
       .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
@@ -203,6 +233,7 @@ export class SolicitudesService {
       autorizacion,
       status: 'AUTORIZADO',
       lastUpdated: new Date().toISOString(),
+      cerrado: true,
       posibleDuplicadoId,
     });
     console.log('Autorización exitosa');
@@ -220,7 +251,6 @@ export class SolicitudesService {
   }
 
   buscarDuplicado(sol: Partial<SolicitudDeDeposito>) {
-    console.log('Buscando  duplicado para: ', sol);
     const { total, cuenta, banco } = sol;
     const fechaDeposito = parseJSON(sol.fechaDeposito);
     return this.afs

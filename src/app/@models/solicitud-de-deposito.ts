@@ -36,6 +36,7 @@ export interface SolicitudDeDeposito {
   rechasosAnteriores?: AutorizacionRechazo[];
   status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO';
   appVersion?: number;
+  cerrado?: boolean;
 }
 
 export interface UpdateSolicitud {

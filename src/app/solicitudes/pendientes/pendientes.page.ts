@@ -36,6 +36,7 @@ export class PendientesPage extends BaseComponent implements OnInit {
     switchMap((user) =>
       user ? this.service.findPendientesBySucursal(user.sucursal) : []
     ),
+    map((rows) => rows.filter((item) => !item.callcenter)),
     map((rows) =>
       rows.sort((a, b) =>
         a.folio > b.folio ? 1 : a.folio === b.folio ? 0 : -1
@@ -70,7 +71,10 @@ export class PendientesPage extends BaseComponent implements OnInit {
     super();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // small bug, some observable does not emit a value
+    this.vm$.pipe(takeUntil(this.destroy$)).subscribe((value) => {});
+  }
 
   changeView(view: 'list' | 'cards') {
     this.view = view;
@@ -98,9 +102,8 @@ export class PendientesPage extends BaseComponent implements OnInit {
       const alert = await this.alertController.create({
         header: 'Subscripción a notificaciones',
         message:
-          'Este equipo ya está registrado para recibir notificaciones, desea actualizarlo?',
+          'Ya está registrado para recibir notificaciones, desea registrase nuevamente?',
         animated: true,
-        mode: 'ios',
         buttons: [
           {
             text: 'Cancelar',

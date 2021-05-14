@@ -27,6 +27,7 @@ import { Cartera, Cliente, SolicitudDeDeposito } from '@papx/models';
 })
 export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
   @Output() save = new EventEmitter<Partial<SolicitudDeDeposito>>();
+  @Output() cancelar = new EventEmitter();
   @Output() valueReady = new EventEmitter<Partial<SolicitudDeDeposito>>();
   @Input() tipo: Cartera;
   @Input() sucursal: string;

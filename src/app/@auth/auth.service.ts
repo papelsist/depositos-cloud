@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFireFunctions } from '@angular/fire/functions';
 
 import { throwError, of, Observable } from 'rxjs';
 import {
   catchError,
   map,
+  pluck,
   shareReplay,
   switchMap,
   take,
@@ -34,6 +34,8 @@ export class AuthService {
     catchError((err) => throwError(err))
   );
 
+  readonly sucursal$ = this.userInfo$.pipe(pluck('sucursal'), shareReplay(1));
+
   canCreateSolicitudes$ = this.claims$.pipe(
     map((claims) => claims['xpapDepositosCrear'])
   );
@@ -45,7 +47,6 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     public readonly auth: AngularFireAuth,
-    private readonly fns: AngularFireFunctions,
     private readonly firestore: AngularFirestore
   ) {}
 

@@ -23,6 +23,7 @@
       [sucursal]="vm.sucursal"
       [solcita]="vm.user.nombre"
       (save)="onSave($event, vm.user)"
+      (cancelar)="onCancelar()"
       (valueReady)="validarDuplicado($event)"
     ></papx-solicitud-create-form>
   </ion-content>

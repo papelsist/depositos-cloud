@@ -45,7 +45,7 @@ import { ModalController } from '@ionic/angular';
                 <small>
                   {{
                     sol.transferencia > 0
-                      ? 'TRS'
+                      ? 'TRANSF'
                       : sol.cheque > 0
                       ? 'CHEQUE'
                       : 'EFECTIVO'

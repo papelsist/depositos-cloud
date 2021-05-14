@@ -83,6 +83,12 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
                 <h5 class="banco-origen ion-text-center">
                   Origen: {{ sol.banco.nombre }}
                 </h5>
+                <h3 *ngIf="sol.rechazo as re">
+                  Motivo:
+                  <ion-text color="warning">
+                    {{ re.motivo }}
+                  </ion-text>
+                </h3>
               </ion-col>
 
               <!-- 3 Fechas 

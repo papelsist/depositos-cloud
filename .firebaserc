@@ -3,7 +3,8 @@
     "depositos": "papx-ws-dev",
     "default": "papx-ws-dev",
     "staging": "papx-ws-prod",
-    "certificacion": "papx-ws-dev"
+    "certificacion": "papx-ws-dev",
+    "prod": "papx-ws-prod"
   },
   "targets": {
     "papx-ws-dev": {

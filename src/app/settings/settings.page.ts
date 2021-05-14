@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '@papx/auth';
-import { UserInfo } from '@papx/models';
 
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -12,6 +11,7 @@ import { NotificationsService } from '../@data-access/services/notifications.ser
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
+  appVersion = '1.0.24';
   vm$ = combineLatest([
     this.notificationService.token$,
     this.auth.userInfo$,
