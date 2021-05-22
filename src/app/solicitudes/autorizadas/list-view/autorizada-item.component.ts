@@ -88,6 +88,11 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
       <ion-note slot="start" color="primary">
         {{ sol.folio }}
       </ion-note>
+      <ion-icon
+        name="checkmark-done"
+        slot="end"
+        [color]="sol.cobro ? 'success' : 'warning'"
+      ></ion-icon>
     </ion-item>
   `,
   styles: [

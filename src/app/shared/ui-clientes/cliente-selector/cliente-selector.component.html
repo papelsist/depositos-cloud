@@ -14,10 +14,18 @@
       (ionChange)="onSearch($event)"
       (ionCancel)="close()"
       (keyup.enter)="onSearAll(search.value)"
+      (keyup.arrowdown)="firstItem($event)"
     ></ion-searchbar>
   </ion-list-header>
-  <ion-list lines="full">
-    <ion-item *ngFor="let c of clientes$ | async" (click)="select(c)" button>
+  <ion-list lines="full" #list>
+    <ion-item
+      *ngFor="let c of clientes$ | async; index as idx; first as fst"
+      (click)="select(c)"
+      button
+      [tabindex]="fst ? -1 : 0"
+      (keyup.arrowdown)="nextItem(idx, $event)"
+      (keyup.arrowup)="previousItem(idx, $event)"
+    >
       <ion-label class="ion-text-wrap">
         <ion-text>
           {{ c.nombre }}

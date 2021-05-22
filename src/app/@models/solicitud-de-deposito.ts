@@ -37,6 +37,7 @@ export interface SolicitudDeDeposito {
   status: 'PENDIENTE' | 'AUTORIZADO' | 'RECHAZADO';
   appVersion?: number;
   cerrado?: boolean;
+  cobro?: string;
 }
 
 export interface UpdateSolicitud {

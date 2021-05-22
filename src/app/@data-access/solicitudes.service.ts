@@ -160,9 +160,18 @@ export class SolicitudesService {
 
   findPendientesBySucursal(
     sucursal: string,
-    max: number = 30
+    max: number = 50
   ): Observable<SolicitudDeDeposito[]> {
-    return this.findPorSucursal(sucursal, 'PENDIENTE', max);
+    return this.afs
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
+        let query = ref
+          .where('sucursal', '==', sucursal)
+          .where('status', '==', 'PENDIENTE')
+          .where('appVersion', '==', 2);
+        return query.limit(max);
+      })
+      .valueChanges({ idField: 'id' })
+      .pipe(catchError((err) => throwError(err)));
   }
 
   findPorSucursal(
@@ -181,6 +190,9 @@ export class SolicitudesService {
       .pipe(catchError((err) => throwError(err)));
   }
 
+  /**
+   * Metodo para localizar las solicitudes autorizadas por sucursal
+   */
   findAutorizadas(
     sucursal: string,
     criteria: PeriodoSearchCriteria
@@ -188,18 +200,36 @@ export class SolicitudesService {
     const { fechaInicial, fechaFinal, registros } = criteria;
     const inicial = startOfDay(parseJSON(criteria.fechaInicial));
     const final = endOfDay(parseJSON(criteria.fechaFinal));
-    console.log(
-      'Fecha inicial JSON: ',
-      startOfDay(parseJSON(criteria.fechaInicial))
-    );
-    console.log('Fecha inicial ISO: ', parseISO(criteria.fechaInicial));
+    // console.log(
+    //   'Fecha inicial JSON: ',
+    //   startOfDay(parseJSON(criteria.fechaInicial))
+    // );
+    // console.log('Fecha inicial ISO: ', parseISO(criteria.fechaInicial));
     return this.afs
       .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
         let query = ref
           .where('autorizacion.fecha', '>=', inicial)
           .where('autorizacion.fecha', '<=', final)
-          .where('sucursal', '==', sucursal);
+          .where('sucursal', '==', sucursal)
+          .where('appVersion', '==', 2)
+          .orderBy('autorizacion.fecha', 'desc');
         return query.limit(registros);
+      })
+      .valueChanges({ idField: 'id' })
+      .pipe(catchError((err) => throwError(err)));
+  }
+
+  /**
+   * Metodo para localizar las solicitudes autorizadas por sucursal
+   */
+  findRechazadas(sucursal: string): Observable<SolicitudDeDeposito[]> {
+    return this.afs
+      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) => {
+        let query = ref
+          .where('status', '==', 'RECHAZADO')
+          .where('sucursal', '==', sucursal)
+          .where('appVersion', '==', 2);
+        return query.limit(100);
       })
       .valueChanges({ idField: 'id' })
       .pipe(catchError((err) => throwError(err)));

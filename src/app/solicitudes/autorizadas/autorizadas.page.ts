@@ -7,14 +7,12 @@ import {
   SolicitudDeDeposito,
   UserInfo,
 } from '@papx/models';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import {
-  map,
-  shareReplay,
-  switchMap,
-  takeUntil,
-  withLatestFrom,
-} from 'rxjs/operators';
+import { BehaviorSubject, combineLatest } from 'rxjs';
+import { map, shareReplay, switchMap } from 'rxjs/operators';
+
+import isEmpty from 'lodash-es/isEmpty';
+import orderBy from 'lodash-es/orderBy';
+
 import { BaseComponent } from 'src/app/core';
 
 @Component({
@@ -24,19 +22,45 @@ import { BaseComponent } from 'src/app/core';
 })
 export class AutorizadasPage extends BaseComponent implements OnInit {
   criteria$ = new BehaviorSubject<PeriodoSearchCriteria>(
-    buildPeriodoCriteria(3, 3)
+    buildPeriodoCriteria(2, 50)
   );
+  search$ = new BehaviorSubject<string>('');
 
-  solicitudes$ = combineLatest([this.criteria$, this.auth.userInfo$]).pipe(
-    map(([criteria, user]) => ({ criteria, sucursal: user.sucursal })),
-    switchMap(({ criteria, sucursal }) =>
-      this.service.findAutorizadas(sucursal, criteria)
+  private _filtrar = new BehaviorSubject<boolean>(false);
+  filtrar$ = this._filtrar.asObservable().pipe(shareReplay());
+
+  solicitudes$ = combineLatest([
+    this.criteria$,
+    this.auth.userInfo$,
+    this.filtrar$,
+  ]).pipe(
+    map(([criteria, user, filtrar]) => ({ criteria, user, filtrar })),
+    switchMap(({ criteria, user, filtrar }) =>
+      this.service.findAutorizadas(user.sucursal, criteria).pipe(
+        map((rows) => orderBy(rows, ['folio'], ['desc'])),
+        map((rows) =>
+          filtrar
+            ? rows.filter((item) => item.updateUserUid === user.uid)
+            : rows
+        )
+      )
     ),
     shareReplay(1)
   );
 
-  private _filtrar = new BehaviorSubject<boolean>(true);
-  filtrar$ = this._filtrar.asObservable().pipe(shareReplay());
+  filteredSolicitudes$ = combineLatest([this.search$, this.solicitudes$]).pipe(
+    map(([term, solicitudes]) =>
+      isEmpty(term)
+        ? solicitudes
+        : solicitudes.filter((item) => {
+            const data =
+              `${item.cliente.nombre}${item.total}${item.solicita}`.toLowerCase();
+            return data.includes(term.toLowerCase());
+          })
+    )
+  );
+
+  vm$ = combineLatest([this.filtrar$]).pipe(map(([filtrar]) => ({ filtrar })));
 
   constructor(private service: SolicitudesService, private auth: AuthService) {
     super();
@@ -49,10 +73,14 @@ export class AutorizadasPage extends BaseComponent implements OnInit {
   }
 
   onSearch(event: string) {
-    console.log('Filter by: ', event);
+    this.search$.next(event);
   }
 
   changeCriteria(event: PeriodoSearchCriteria) {
     this.criteria$.next(event);
+  }
+
+  getTitle(value: boolean) {
+    return value ? 'Mis solicitudes autorizadas' : 'Solicitudes Autorizadas';
   }
 }

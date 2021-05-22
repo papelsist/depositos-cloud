@@ -2,10 +2,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   Input,
   OnInit,
+  QueryList,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { IonItem, IonList, ModalController } from '@ionic/angular';
 
 import { Cliente } from '@papx/models';
 import { ClientesService } from '@papx/data-access';
@@ -30,6 +34,8 @@ export class ClienteSelectorComponent implements OnInit {
   filter$ = new BehaviorSubject('');
   // clientes$: Observable<Partial<Cliente>[]>;
   clientes$;
+  @ViewChild('list') ionList: any;
+  @ViewChildren(IonItem) items: QueryList<any>;
 
   constructor(
     private modalCtrl: ModalController,
@@ -72,6 +78,29 @@ export class ClienteSelectorComponent implements OnInit {
 
   onSearAll(term: string) {
     this.clientes$ = this.service.searchClientes(term, 5);
+  }
+
+  firstItem(event: any) {
+    if (this.items.first) {
+      const el = this.items.first.el as HTMLElement;
+      el.focus();
+    }
+  }
+
+  nextItem(index: number, event: KeyboardEvent) {
+    const item = event.target as HTMLElement;
+    const nextItem = item.nextSibling as HTMLElement;
+    if (nextItem) {
+      nextItem.focus();
+    }
+  }
+
+  previousItem(index: number, event: KeyboardEvent) {
+    const item = event.target as HTMLElement;
+    const previousItem = item.previousSibling as HTMLElement;
+    if (previousItem) {
+      previousItem.focus();
+    }
   }
 
   handleError(err: any) {

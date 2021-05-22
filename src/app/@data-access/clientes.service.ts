@@ -9,6 +9,8 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { environment } from 'src/environments/environment';
 
+import sortBy from 'lodash-es/sortBy';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,7 +20,10 @@ export class ClientesService {
     catchError((error: any) => throwError(error))
   );
 
-  clientesCache$ = this.fetchClientesCache().pipe(shareReplay());
+  clientesCache$ = this.fetchClientesCache().pipe(
+    map((clientes) => sortBy(clientes, 'nombre')),
+    shareReplay()
+  );
 
   constructor(
     private http: HttpClient,

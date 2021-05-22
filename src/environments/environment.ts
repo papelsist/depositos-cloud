@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  firebaseConfigDev: {
+  firebaseConfig: {
     apiKey: 'AIzaSyApr87DnHxnrmxF_Pv2gigeSE-err2QHWg',
     authDomain: 'papx-ws-dev.firebaseapp.com',
     projectId: 'papx-ws-dev',
@@ -12,7 +12,7 @@ export const environment = {
     messagingSenderId: '245292921623',
     appId: '1:245292921623:web:116c7620999796721cfd52',
   },
-  firebaseConfig: {
+  firebaseConfigProd: {
     apiKey: 'AIzaSyCDfKhbG1VApFFMynFVeoxQ9BTRtam72_8',
     authDomain: 'papx-ws-prod.firebaseapp.com',
     projectId: 'papx-ws-prod',
