@@ -22,9 +22,11 @@
       [tipo]="cartera"
       [sucursal]="vm.sucursal"
       [solcita]="vm.user.nombre"
+      [pedido]="pedido"
       (save)="onSave($event, vm.user)"
       (cancelar)="onCancelar()"
       (valueReady)="validarDuplicado($event)"
+      (lookupPedido)="onLookupPedido($event, vm.sucursal)"
     ></papx-solicitud-create-form>
   </ion-content>
   <ion-footer>

@@ -38,6 +38,7 @@ export interface SolicitudDeDeposito {
   appVersion?: number;
   cerrado?: boolean;
   cobro?: string;
+  pedido?: { [key: string]: any };
 }
 
 export interface UpdateSolicitud {

@@ -6,6 +6,9 @@ import { AlertController } from '@ionic/angular';
 import { combineLatest } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 
+import toNumber from 'lodash-es/toNumber';
+import isNumber from 'lodash-es/isNumber';
+
 import {
   Cartera,
   carteraDisplayName,
@@ -33,6 +36,7 @@ export class CreateSolicitudPage implements OnInit {
       cartera: user.sucursal === 'OFICINAS' ? 'CRE' : 'CON',
     }))
   );
+  pedido: any = null;
 
   constructor(
     private service: SolicitudesService,
@@ -59,7 +63,8 @@ export class CreateSolicitudPage implements OnInit {
   }
 
   onCancelar() {
-    this.router.navigate(['solicitudes', 'pendientes']);
+    // this.router.navigate(['/solicitudes', 'pendientes']);
+    this.router.navigateByUrl('/solicitudes/pendientes');
   }
 
   async validarDuplicado(sol: Partial<SolicitudDeDeposito>) {
@@ -84,9 +89,44 @@ export class CreateSolicitudPage implements OnInit {
     return carteraDisplayName(this.cartera);
   }
 
+  onLookupPedido(event: number, sucursal: string) {
+    const folio = toNumber(event);
+    if (isNumber(folio)) {
+      console.log('Localizando pedido: ', folio, sucursal);
+      this.service.buscarPedido(folio, sucursal).subscribe(
+        (found) => {
+          console.log('Found: ', found);
+          if (!found) {
+            this.handleError('No existe el pedido: ' + folio);
+            return;
+          }
+          if (
+            // this.validarFormaDePago(found) &&
+            // this.validarStatus(found) &&
+            this.validarExistente(found)
+          ) {
+            this.pedido = found;
+          }
+        },
+        (err) => this.handleError(err.message)
+      );
+    }
+  }
+
+  private validarExistente(pedido: any) {
+    if (pedido.solicitud) {
+      this.handleError(
+        'El pedido ya se encuentra referenciado en la solicitud:: ' +
+          pedido.solicitud.folio
+      );
+      return false;
+    }
+    return true;
+  }
+
   async handleError(message: string) {
     const al = await this.alertController.create({
-      header: 'Error salvando datos',
+      header: 'Error',
       subHeader: 'Firebase',
       message,
       mode: 'ios',

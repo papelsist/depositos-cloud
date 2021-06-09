@@ -1,6 +1,42 @@
 <form [formGroup]="form">
   <ion-grid>
     <ion-row>
+      <ion-col size="4">
+        <ion-item>
+          <ion-label position="floating"> Pedido </ion-label>
+          <ion-input
+            type="number"
+            placeholder="Número de pedido"
+            (keyup.enter)="lookupPedido.emit(pedidoField.value)"
+            #pedidoField
+          ></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="pedido">
+      <ion-col>
+        <ion-item>
+          <ion-label class="ion-text-wrap">
+            <h3 class="row">
+              <span> Pedido : {{ pedido.folio }} </span>
+              <span class="ion-padding-start"
+                >Fecha: {{ pedido.fecha.toDate() | date: 'dd/MM/yyyy' }}</span
+              >
+              <span>F.P: {{ pedido.formaDePago }}</span>
+              <ion-text color="primary" class="ion-padding-start">
+                <span>Total: {{ pedido.total | currency }} </span>
+              </ion-text>
+            </h3>
+            <p>
+              <span>Vendedor: {{ pedido.updateUser }}</span>
+            </p>
+          </ion-label>
+          <ion-icon name="bag" slot="start"></ion-icon>
+          <ion-icon name="close" slot="end" (click)="pedido = null"></ion-icon>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
       <ion-col size="12">
         <papelx-cliente-selector-field
           formControlName="cliente"

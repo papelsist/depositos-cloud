@@ -29,6 +29,7 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
   @Output() save = new EventEmitter<Partial<SolicitudDeDeposito>>();
   @Output() cancelar = new EventEmitter();
   @Output() valueReady = new EventEmitter<Partial<SolicitudDeDeposito>>();
+  @Output() lookupPedido = new EventEmitter();
   @Input() tipo: Cartera;
   @Input() sucursal: string;
   @Input() solcita: string;
@@ -37,6 +38,7 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
   controls: { [key: string]: AbstractControl };
 
   destroy$ = new Subject<boolean>();
+  _pedido: any;
 
   constructor(private fb: FormBuilder) {}
 
@@ -137,6 +139,7 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
       transferencia: this.form.get('transferencia'),
       efectivo: this.form.get('efectivo'),
       cheque: this.form.get('cheque'),
+      cliente: this.form.get('cliente'),
     };
   }
 
@@ -153,12 +156,15 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.form.valid) {
       const cliente = this.getCliente();
-      const payload: Partial<SolicitudDeDeposito> = {
+      let payload: Partial<SolicitudDeDeposito> = {
         ...this.form.getRawValue(),
         cliente,
         sbc: this.getSbc(),
         status: 'PENDIENTE',
       };
+      if (this.pedido) {
+        payload = { ...payload, pedido: this.pedido };
+      }
       this.save.emit(payload);
     }
   }
@@ -176,6 +182,57 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
       return banco.id !== cuenta.banco;
     } else {
       return false;
+    }
+  }
+
+  get pedido(): any {
+    return this._pedido;
+  }
+
+  @Input()
+  set pedido(value: any) {
+    if (value) {
+      const {
+        id,
+        folio,
+        fecha,
+        total,
+        formaDePago,
+        cliente,
+        sucursal,
+        sucursalId,
+        updateUser,
+      } = value;
+      this._pedido = { id, folio, fecha, total, formaDePago, updateUser };
+
+      // this.controls.sucursal.setValue({ id: sucursalId, nombre: sucursal });
+      this.controls.cliente.setValue(cliente);
+      // this.controls.sucursal.disable();
+      this.controls.cliente.disable();
+      switch (formaDePago) {
+        case 'TRANSFERENCIA':
+          this.controls.transferencia.setValue(total);
+          break;
+        case 'DEPOSITO_EFECTIVO':
+          this.controls.efectivo.setValue(total);
+          break;
+        case 'DEPOSITO_CHEQUE':
+          this.controls.cheque.setValue(total);
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (this._pedido && this.form) {
+        // this.controls.sucursal.setValue(null);
+        this.controls.cliente.setValue(null);
+        // this.controls.sucursal.enable();
+        this.controls.cliente.enable();
+        this.controls.transferencia.setValue(0);
+        this.controls.cheque.setValue(0);
+        this.controls.efectivo.setValue(0);
+      }
+      this._pedido = value;
     }
   }
 }

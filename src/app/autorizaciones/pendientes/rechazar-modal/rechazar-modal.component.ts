@@ -88,6 +88,7 @@ export class RechazarModalComponent implements OnInit {
     'CHECAR_FECHA',
     'CHECAR_IMPORTE',
     'PROBLEMAS_CON_EL_BANCO',
+    'NO_EXISTE_BANCO'
   ];
 
   constructor(private popover: PopoverController) {}

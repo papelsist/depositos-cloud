@@ -11,7 +11,7 @@ import { NotificationsService } from '../@data-access/services/notifications.ser
   styleUrls: ['./settings.page.scss'],
 })
 export class SettingsPage implements OnInit {
-  appVersion = '1.0.29';
+  appVersion = '1.0.35';
   vm$ = combineLatest([
     this.notificationService.token$,
     this.auth.userInfo$,

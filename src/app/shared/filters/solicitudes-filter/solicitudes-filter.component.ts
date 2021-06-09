@@ -17,7 +17,7 @@ import { SolicitudesFilterModalComponent } from './solicitudes-filter-modal.comp
       <ion-icon
         name="filter"
         slot="icon-only"
-        [color]="filter ? 'warning' : ''"
+        [color]="filter ? 'primary' : ''"
       ></ion-icon>
     </ion-button>
   `,

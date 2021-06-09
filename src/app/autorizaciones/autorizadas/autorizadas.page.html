@@ -6,7 +6,7 @@
     <ion-title>Autorizadas</ion-title>
     <ion-buttons slot="end">
       <papx-solicitudes-filter
-        [filter]="filter"
+        [filter]="filter$ | async"
         (search)="onSearch($event)"
       ></papx-solicitudes-filter>
     </ion-buttons>
@@ -16,11 +16,14 @@
 <ion-content class="ion-padding">
   <ion-toolbar>
     <ion-searchbar
+      #search
       placeholder="Buscar"
       (ionChange)="onFilter($event)"
+      (keyup.enter)="buscarPorFolio(search.value)"
     ></ion-searchbar>
   </ion-toolbar>
   <papx-solicitudes-autorizadas-list
-    [solicitudes]="autorizadas$ | async"
+    [solicitudes]="filteredList$ | async"
+    (edit)="onEdit($event)"
   ></papx-solicitudes-autorizadas-list>
 </ion-content>
