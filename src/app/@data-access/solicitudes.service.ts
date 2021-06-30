@@ -318,13 +318,15 @@ export class SolicitudesService {
     const { total, cuenta, banco } = sol;
     const fechaDeposito = parseJSON(sol.fechaDeposito);
     return this.afs
-      .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
-        ref
-          .where('total', '==', total)
-          .where('cuenta.id', '==', cuenta.id)
-          .where('banco.id', '==', banco.id)
-          // .where('id', '!=', id)
-          .limit(10)
+      .collection<SolicitudDeDeposito>(
+        this.COLLECTION,
+        (ref) =>
+          ref
+            .where('total', '==', total)
+            .where('cuenta.id', '==', cuenta.id)
+            .where('banco.id', '==', banco.id)
+        // .where('id', '!=', id)
+        // .limit(10)
       )
       .valueChanges({ idField: 'id' })
       .pipe(
