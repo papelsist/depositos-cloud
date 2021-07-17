@@ -29,15 +29,6 @@ export class AutorizadasPage implements OnInit {
   folio$ = this._folio.asObservable();
   filter$ = this._filter.asObservable();
 
-  // autorizadas$ = this.service.autorizadas$;
-  autorizadas2$ = this.folio$.pipe(
-    switchMap((folio) =>
-      folio
-        ? this.service.buscarAutorizadasPorFolio(folio)
-        : this.service.autorizadas$
-    )
-  );
-
   autorizadas$ = combineLatest([this.filter$, this.folio$]).pipe(
     switchMap(([filter, folio]) =>
       filter

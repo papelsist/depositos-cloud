@@ -54,8 +54,8 @@ export class SolicitudesService {
           const res: SolicitudDeDeposito = { id, ...data };
           return res;
         })
-      )
-      // shareReplay()
+      ),
+      shareReplay()
     );
   // .valueChanges({ idField: 'id' })
   // .pipe(shareReplay());
