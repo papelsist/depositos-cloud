@@ -2,7 +2,7 @@
   <ion-menu side="start" menuId="first" contentId="main" #menu>
     <ion-header *ngIf="user$ | async as user">
       <ion-toolbar color="accent" translucent>
-        <ion-title>
+        <ion-title color="primary">
           {{ user.displayName }}
         </ion-title>
         <ion-buttons slot="start">
@@ -52,7 +52,7 @@
       </ion-list>
     </ion-content>
     <ion-footer>
-      <ion-toolbar color="dark" class="main-menu-footer">
+      <ion-toolbar color="tertiary" class="main-menu-footer">
         <ion-title>Firebase: {{ projectId }}</ion-title>
       </ion-toolbar>
     </ion-footer>

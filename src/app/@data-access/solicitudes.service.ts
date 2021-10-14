@@ -17,6 +17,7 @@ import {
 } from '../@models/solicitud-de-deposito';
 import { Autorizacion, AutorizacionRechazo } from '../@models/autorizacion';
 import { PeriodoSearchCriteria, User } from '@papx/models';
+import { Direccion } from '../@models/direccion';
 
 @Injectable({ providedIn: 'root' })
 export class SolicitudesService {
@@ -68,8 +69,9 @@ export class SolicitudesService {
   rechazadas$ = this.afs
     .collection<SolicitudDeDeposito>(this.COLLECTION, (ref) =>
       ref
-        .where('status', '==', 'RECHAZADO')
         .where('appVersion', '==', 2)
+        .where('status', '==', 'RECHAZADO')
+        .orderBy("dateCreated", 'desc')
         .limit(50)
     )
     .valueChanges({ idField: 'id' })

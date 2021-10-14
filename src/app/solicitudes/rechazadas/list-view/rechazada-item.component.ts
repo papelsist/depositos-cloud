@@ -28,6 +28,12 @@ import { SolicitudDetailModalComponent } from '@papx/shared/ui-solicitudes/solic
           >Detalle
           <ion-icon slot="bottom" name="information-circle"></ion-icon>
         </ion-item-option>
+
+        <ion-item-option color="tertiary" (click)="showDetail(sol)"
+          >Editar
+          <ion-icon slot="bottom" name="color-wand-outline"></ion-icon>
+        </ion-item-option>
+        
         <ion-item-option color="danger" (click)="eliminar.emit(sol)"
           >Eliminar
           <ion-icon slot="bottom" name="trash"></ion-icon>
