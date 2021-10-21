@@ -68,7 +68,22 @@ export class CreateSolicitudPage implements OnInit {
   }
 
   async validarDuplicado(sol: Partial<SolicitudDeDeposito>) {
-    const found = await this.service.buscarDuplicado(sol);
+    let found: any = 0;
+    let obtenerDuplicados: any =  await this.service.buscarDuplicado(sol);
+    let obtenerDuplicadosC: any = await this.service.buscarDuplicadoC(sol);
+
+    if ( obtenerDuplicados.length > 0 ){
+      found = obtenerDuplicados;
+      //console.log("entro en el primer if con valor : " + obtenerDuplicados)
+    }
+    else if ( obtenerDuplicadosC.length > 0 ){
+      found = obtenerDuplicadosC;
+      //console.log("entro en el segundo if con valor : " + obtenerDuplicadosC)
+    }
+    else {
+      found = 0;
+    }
+
     if (found.length > 0) {
       const { sucursal, solicita, total } = found[0];
       const message = `Existe un depósito YA REGISTRADO con 
@@ -76,10 +91,11 @@ export class CreateSolicitudPage implements OnInit {
         en la sucursal ${sucursal}. Registrado por: ${solicita}`;
       const alert = await this.alertController.create({
         header: 'Alerta',
-        subHeader: `Posible deposito duplicado por`,
+        subHeader: `Posible deposito duplicado`,
         message,
         buttons: ['OK'],
         cssClass: 'create-solicitud-custom-alert',
+        //cssClass: 'my-prueba-class',
       });
       await alert.present();
     }

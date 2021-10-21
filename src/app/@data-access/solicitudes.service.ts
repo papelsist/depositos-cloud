@@ -71,7 +71,7 @@ export class SolicitudesService {
       ref
         .where('appVersion', '==', 2)
         .where('status', '==', 'RECHAZADO')
-        .orderBy("dateCreated", 'desc')
+        .orderBy('dateCreated', 'desc')
         .limit(50)
     )
     .valueChanges({ idField: 'id' })
@@ -325,10 +325,39 @@ export class SolicitudesService {
         (ref) =>
           ref
             .where('total', '==', total)
-            .where('cuenta.id', '==', cuenta.id)
-            .where('banco.id', '==', banco.id)
-        // .where('id', '!=', id)
+            .where('cuenta.descripcion', '==', cuenta.descripcion)
+            //.where('fechaDeposito', '==', fechaDeposito)
+            //.where('fechaDeposito', 'array-contains-any', ['2021','-'])
+            //.equalTo('fechaDeposito')
         // .limit(10)
+      )
+      .valueChanges({ idField: 'id' })
+      .pipe(
+        take(1),
+        map((rows) => rows.filter((item) => item.id !== sol.id)),
+        map((rows) =>
+          rows.filter((item) => {
+            const fdep = parseJSON(item.fechaDeposito);
+            return isSameDay(fechaDeposito, fdep);
+          })
+        ),
+        catchError((err) => throwError(err))
+      )
+      .toPromise();
+  }
+
+  buscarDuplicadoC(sol: Partial<SolicitudDeDeposito>) {
+    const { total, cuenta, banco } = sol;
+    const fechaDeposito = parseJSON(sol.fechaDeposito);
+    return this.afs
+      .collection<SolicitudDeDeposito>(
+        this.COLLECTION,
+        (ref) =>
+          ref
+            .where('total', '==', total)
+            .where('banco.id', '==', banco.id)
+            //.where('cuenta.descripcion', '==', cuenta.descripcion)      
+            
       )
       .valueChanges({ idField: 'id' })
       .pipe(

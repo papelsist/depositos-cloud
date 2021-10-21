@@ -27,6 +27,8 @@
 
 .create-solicitud-custom-alert {
   --min-width: 70%;
+  --background: #FFD534;
+  //color: #000000 !important;
 }
 // .solicitud-detail-modal {
 //   --width: 60%;
@@ -66,4 +68,16 @@ ion-popover.solicitud-autorizar-popover {
 .cambio-de-cliente-modal {
   --min-width: 600px;
   --max-height: 400px;
+}
+
+.alert-message.sc-ion-alert-md, .alert-input-group.sc-ion-alert-md{
+ color: #000000 ; 
+}
+
+.alert-sub-title.sc-ion-alert-md {
+  color: #000000 ; 
+}
+
+.alert-title.sc-ion-alert-md{
+ color: #1a0303 ; 
 }
