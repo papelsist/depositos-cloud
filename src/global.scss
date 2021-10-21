@@ -29,7 +29,11 @@
 @import '~@ionic/angular/css/text-transformation.css';
 @import '~@ionic/angular/css/flex-utils.css';
 .create-solicitud-custom-alert {
-    --min-width: 70%;
+    <<<<<<< HEAD --min-width: 70%;
+    =======--min-width: 70%;
+    --background: #FFD534;
+    //color: #000000 !important;
+    >>>>>>>90fc482912ead67799aefea008596e926632fc0f
 }
 
 // .solicitud-detail-modal {
@@ -72,4 +76,17 @@ ion-popover.solicitud-autorizar-popover {
 .cambio-de-cliente-modal {
     --min-width: 600px;
     --max-height: 400px;
+}
+
+.alert-message.sc-ion-alert-md,
+.alert-input-group.sc-ion-alert-md {
+    color: #000000;
+}
+
+.alert-sub-title.sc-ion-alert-md {
+    color: #000000;
+}
+
+.alert-title.sc-ion-alert-md {
+    color: #1a0303;
 }

@@ -136,7 +136,25 @@ export class PendientesPage extends BaseComponent implements OnInit {
   async onAutorizar(solicitud: Partial<SolicitudDeDeposito>, user: User) {
     // console.log('Autorizar: ', solicitud);
     const duplicados = await this.service.buscarDuplicado(solicitud);
-    const posibleDuplicado = duplicados.length > 0 ? duplicados[0] : null;
+    const duplicadosC = await this.service.buscarDuplicadoC(solicitud);
+    let pDuplicado: any = 0;
+    let posibleDuplicado: any = 0;
+    if (duplicados.length>0){
+      //console.log("duplicados entra")
+      //pDuplicado =1;
+      posibleDuplicado = duplicados.length > 0 ? duplicados[0] : null;
+    }
+    else if (duplicadosC.length>0){
+      //console.log("duplicadosCuenta entro")
+      //pDuplicado =2;
+      posibleDuplicado = duplicadosC.length > 0 ? duplicadosC[0] : null;
+    }
+    else {
+      //console.log("no entra en ninguno")
+      //pDuplicado =3;
+    }
+    //console.log(pDuplicado);
+    
     // console.log('Posible duplicado: ', posibleDuplicado);
     const modal = await this.popover.create({
       component: AutorizarModalComponent,
