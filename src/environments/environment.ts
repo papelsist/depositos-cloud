@@ -10,7 +10,7 @@ export const environment = {
     projectId: 'papx-ws-dev',
     storageBucket: 'papx-ws-dev.appspot.com',
     messagingSenderId: '245292921623',
-    appId: '1:245292921623:web:116c7620999796721cfd52',
+    appId: '1:245292921623:web:ad0a7b2d6e7d5a681cfd52',
   },
   firebaseConfigProd: {
     apiKey: 'AIzaSyCDfKhbG1VApFFMynFVeoxQ9BTRtam72_8',

@@ -14,7 +14,7 @@ import {
         src="https://firebasestorage.googleapis.com/v0/b/papx-ws-prod.appspot.com/o/images%2Flogo.svg?alt=media&token=c957d196-9ee4-4597-9291-189f393cc2b7"
       />
       <ion-card-header>
-        <ion-card-title>SX-DEPOSITOS</ion-card-title>
+        <ion-card-title>DEPOSITOS</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-text color="medium">

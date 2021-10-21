@@ -1,23 +1,12 @@
 {
   "projects": {
-    "depositos": "papx-ws-dev",
-    "default": "papx-ws-dev",
-    "staging": "papx-ws-prod",
-    "certificacion": "papx-ws-dev",
-    "prod": "papx-ws-prod"
+    "cloud": "papel-cloud-9c1df"
   },
   "targets": {
-    "papx-ws-dev": {
+    "papel-cloud-9c1df": {
       "hosting": {
-        "app": [
-          "papel-depositos"
-        ]
-      }
-    },
-    "papx-ws-prod": {
-      "hosting": {
-        "app": [
-          "papws-depositos"
+        "papel-depositos": [
+          "papel-depositos-cloud"
         ]
       }
     }

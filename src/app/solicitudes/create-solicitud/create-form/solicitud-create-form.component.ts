@@ -68,7 +68,7 @@ export class SolicitudCreateFormComponent implements OnInit, OnDestroy {
       efectivo: [null, [Validators.min(0.0)]],
       cheque: [null, [Validators.min(0.0)]],
       transferencia: [null, [Validators.min(0.0)]],
-      total: [null, [Validators.required, Validators.min(10.0)]],
+      total: [null, [Validators.required, Validators.min(1.0)]],
       referencia: [null, [Validators.required]],
       fechaDeposito: [null, [Validators.required]],
       solicita: [this.solcita, [Validators.required]],
